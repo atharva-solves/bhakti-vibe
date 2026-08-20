@@ -8,7 +8,7 @@ class TrendingAartiUsecase {
     : _aartiRepository = aartiRepository;
   Future<List<AartiEntity>> call() async {
     final List<AartiEntity> trendingAartis = await _aartiRepository
-        .getTrendingaAartis();
+        .getTrendingAartis();
     return trendingAartis;
   }
 }

@@ -6,6 +6,6 @@ abstract class AartiRepository {
   Future<List<AartiEntity>> getAartiListByFestival({required String festivalId});
   Future<AartiEntity> getSingleAarti({required String aartiId});
 
-  Future<List<AartiEntity>>getTrendingaAartis();
+  Future<List<AartiEntity>>getTrendingAartis();
   Future<List<AartiEntity>>getRecentlyPlayedAartis();
 }
