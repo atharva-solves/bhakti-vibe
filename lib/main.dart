@@ -1,3 +1,4 @@
+import 'package:bhakti_vibe/core/bindings/initial_binding.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      
+      initialBinding: InitialBinding(),
     );
   }
 }
