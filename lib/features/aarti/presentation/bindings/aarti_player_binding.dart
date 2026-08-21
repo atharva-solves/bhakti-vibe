@@ -6,7 +6,7 @@ import 'package:bhakti_vibe/features/aarti/domain/usecases/get_single_aarti_usec
 import 'package:bhakti_vibe/features/aarti/presentation/controllers/aarti_player_controller.dart';
 import 'package:get/instance_manager.dart';
 
-class SingleAartiBinding extends Bindings {
+class AartiPlayerBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<AartiRemoteDataSource>(

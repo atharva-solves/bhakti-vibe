@@ -1,3 +1,5 @@
+import 'package:bhakti_vibe/core/routes/app_routes.dart';
+import 'package:bhakti_vibe/features/aarti/presentation/args/aarti_player_args.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:bhakti_vibe/features/aarti/domain/entities/aarti_entity.dart';
@@ -103,40 +105,56 @@ class AartiMainView extends GetView<AartiMainController> {
           final AartiEntity aarti = controller.recentlyPlayedAartis[index];
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: SizedBox(
-              width: 110,
-              child: Column(
-                children: [
-                  Container(
-                    height: 120,
-                    width: 110,
-                    decoration: BoxDecoration(
-                      // Creating the arched/tombstone shape shown in the design
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(60),
-                        bottom: Radius.circular(16),
-                      ),
-                      image: DecorationImage(
-                        image: NetworkImage(
-                          aarti.withoutBgImage,
-                        ), // Uses withoutBgImage
-                        fit: BoxFit.cover,
+            child: GestureDetector(
+              onTap: () {
+                debugPrint('Aarti main :recently : on tap: aarti main image ==> ${aarti.mainImage}');
+                // Navigate to Player and pass the custom arguments class
+                Get.toNamed(
+                  AppRoutes.aartiPlayer, // Use your actual route name
+                  arguments: AartiPlayerArgs(
+                    aartiTitle: aarti.title,
+                    mainImage: aarti.mainImage,
+                    aartiAudio: aarti.audio,
+                    aartiList: controller.recentlyPlayedAartis, // Pass the whole list
+                    currentIndex: index, // Pass the tapped index
+                  ),
+                );
+              },
+              child: SizedBox(
+                width: 110,
+                child: Column(
+                  children: [
+                    Container(
+                      height: 120,
+                      width: 110,
+                      decoration: BoxDecoration(
+                        // Creating the arched/tombstone shape shown in the design
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(60),
+                          bottom: Radius.circular(16),
+                        ),
+                        image: DecorationImage(
+                          image: NetworkImage(
+                            aarti.withoutBgImage,
+                          ), // Uses withoutBgImage
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    aarti.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xFFA63B3B),
+                    const SizedBox(height: 8),
+                    Text(
+                      aarti.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFFA63B3B),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
@@ -163,37 +181,34 @@ class AartiMainView extends GetView<AartiMainController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: Stack(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                aarti.bgImage,
-                              ), // Uses bgImage
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+                    // Stack replaced with Container
+                    child: Container(
+                      alignment:
+                          Alignment.bottomLeft, // Aligns child to bottom-left
+                      padding: const EdgeInsets.only(
+                        left: 8,
+                        bottom: 8,
+                      ), // Replaces Stack positioning
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        image: DecorationImage(
+                          image: NetworkImage(aarti.bgImage), // Uses bgImage
+                          fit: BoxFit.cover,
                         ),
-                        // Play button overlay
-                        Positioned(
-                          bottom: 8,
-                          left: 8,
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white,
-                            ),
-                            child: const Icon(
-                              Icons.play_arrow,
-                              color: Color(0xFFA63B3B),
-                              size: 18,
-                            ),
-                          ),
+                      ),
+                      // Play button overlay as a direct child
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
                         ),
-                      ],
+                        child: const Icon(
+                          Icons.play_arrow,
+                          color: Color(0xFFA63B3B),
+                          size: 18,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -235,37 +250,36 @@ class AartiMainView extends GetView<AartiMainController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: Stack(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                category.catImage,
-                              ), // Uses catImage
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+                    // Stack replaced with Container
+                    child: Container(
+                      alignment:
+                          Alignment.bottomLeft, // Aligns child to bottom-left
+                      padding: const EdgeInsets.only(
+                        left: 8,
+                        bottom: 8,
+                      ), // Replaces Stack positioning
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        image: DecorationImage(
+                          image: NetworkImage(
+                            category.catImage,
+                          ), // Uses catImage
+                          fit: BoxFit.cover,
                         ),
-                        // Play button overlay
-                        Positioned(
-                          bottom: 8,
-                          left: 8,
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white,
-                            ),
-                            child: const Icon(
-                              Icons.play_arrow,
-                              color: Color(0xFFA63B3B),
-                              size: 18,
-                            ),
-                          ),
+                      ),
+                      // Play button overlay as a direct child
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
                         ),
-                      ],
+                        child: const Icon(
+                          Icons.play_arrow,
+                          color: Color(0xFFA63B3B),
+                          size: 18,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),

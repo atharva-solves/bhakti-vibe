@@ -16,7 +16,7 @@ class AartiDataModel extends AartiEntity {
       withoutBgImage: json['without_bg_image']?? '',
       bgImage: json['bg_image']??'',
       audio: json['audio'],
-      mainImage: json['mainImage']??'',
+      mainImage: json['main_image']??'',
     );
   }
 }
