@@ -8,9 +8,11 @@ class AartiPlayerController extends GetxController {
   AartiPlayerController({required GetSingleAartiUsecase getSingleAartiUsecase})
     : _getSingleAartiUsecase = getSingleAartiUsecase;
 
-  RxBool isLoading = false.obs;
-  RxString errorMessage = ''.obs;
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
   final singleAarti = Rxn<AartiEntity>();
+
+  final RxList aartis = <AartiEntity>[].obs;
 
   Future<void> getSingleAarti({required String aartiId}) async {
     try {

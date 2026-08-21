@@ -5,7 +5,7 @@ import 'package:bhakti_vibe/features/aarti/domain/usecases/recently_played_aarti
 import 'package:bhakti_vibe/features/aarti/domain/usecases/trending_aarti_usecase.dart';
 import 'package:get/get.dart';
 
-class AartiMainController extends GetxController{
+class AartiMainController extends GetxController {
   final AartiFestivalCatagoriesUsecase _aartiFestivalCatagoriesUsecase;
   final TrendingAartiUsecase _trendingAartiUsecase;
   final RecentlyPlayedAartiUsecase _recentlyPlayedAartiUsecase;
@@ -26,6 +26,14 @@ class AartiMainController extends GetxController{
   RxList<AartiEntity> trendingAartis = <AartiEntity>[].obs;
 
   RxList<AartiEntity> recentlyPlayedAartis = <AartiEntity>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    getRecentlyPlayedAartis();
+    getTrendingAartis();
+    getFestivlCategories();
+  }
 
   Future<void> getFestivlCategories() async {
     try {

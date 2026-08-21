@@ -11,12 +11,12 @@ class AartiDataModel extends AartiEntity {
   });
   factory AartiDataModel.fromJson({required Map<String, dynamic> json}) {
     return AartiDataModel(
-      id: json['id'],
-      title: json['title'],
-      withoutBgImage: json['without_bg_image'],
-      bgImage: json['bg_image'],
+      id: json['id'] ,
+      title: json['title'] ?? 'untitled',
+      withoutBgImage: json['without_bg_image']?? '',
+      bgImage: json['bg_image']??'',
       audio: json['audio'],
-      mainImage: json['mainImage'],
+      mainImage: json['mainImage']??'',
     );
   }
 }

@@ -1,10 +1,13 @@
 import 'package:bhakti_vibe/core/bindings/initial_binding.dart';
+import 'package:bhakti_vibe/core/routes/app_pages.dart';
+import 'package:bhakti_vibe/core/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-void main(){
+void main() {
   runApp(MyApp());
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -13,6 +16,8 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       initialBinding: InitialBinding(),
+      initialRoute: AppRoutes.aartiMain,
+      getPages: AppPages.pages,
     );
   }
 }

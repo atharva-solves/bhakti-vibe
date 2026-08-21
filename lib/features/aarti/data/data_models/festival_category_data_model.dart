@@ -13,7 +13,7 @@ class FestivalCategoryDataModel extends FestivalCategoryEntity {
     return FestivalCategoryDataModel(
       id: json['id'],
       name: json['name'],
-      catImage: json['cat_image'],
+      catImage: json['cat_image']??'',
     );
   }
 }
