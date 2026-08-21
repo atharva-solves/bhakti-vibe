@@ -107,7 +107,9 @@ class AartiMainView extends GetView<AartiMainController> {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: GestureDetector(
               onTap: () {
-                debugPrint('Aarti main :recently : on tap: aarti main image ==> ${aarti.mainImage}');
+                debugPrint(
+                  'Aarti main :recently : on tap: aarti main image ==> ${aarti.mainImage}',
+                );
                 // Navigate to Player and pass the custom arguments class
                 Get.toNamed(
                   AppRoutes.aartiPlayer, // Use your actual route name
@@ -115,7 +117,8 @@ class AartiMainView extends GetView<AartiMainController> {
                     aartiTitle: aarti.title,
                     mainImage: aarti.mainImage,
                     aartiAudio: aarti.audio,
-                    aartiList: controller.recentlyPlayedAartis, // Pass the whole list
+                    aartiList:
+                        controller.recentlyPlayedAartis, // Pass the whole list
                     currentIndex: index, // Pass the tapped index
                   ),
                 );
@@ -177,52 +180,71 @@ class AartiMainView extends GetView<AartiMainController> {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: SizedBox(
               width: 120,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    // Stack replaced with Container
-                    child: Container(
-                      alignment:
-                          Alignment.bottomLeft, // Aligns child to bottom-left
-                      padding: const EdgeInsets.only(
-                        left: 8,
-                        bottom: 8,
-                      ), // Replaces Stack positioning
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        image: DecorationImage(
-                          image: NetworkImage(aarti.bgImage), // Uses bgImage
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      // Play button overlay as a direct child
+              child: GestureDetector(
+                onTap: () {
+                  debugPrint(
+                    'Aarti main :recently : on tap: aarti main image ==> ${aarti.mainImage}',
+                  );
+                  // Navigate to Player and pass the custom arguments class
+                  Get.toNamed(
+                    AppRoutes.aartiPlayer, // Use your actual route name
+                    arguments: AartiPlayerArgs(
+                      aartiTitle: aarti.title,
+                      mainImage: aarti.mainImage,
+                      aartiAudio: aarti.audio,
+                      aartiList: controller
+                          .recentlyPlayedAartis, // Pass the whole list
+                      currentIndex: index, // Pass the tapped index
+                    ),
+                  );
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      // Stack replaced with Container
                       child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
+                        alignment:
+                            Alignment.bottomLeft, // Aligns child to bottom-left
+                        padding: const EdgeInsets.only(
+                          left: 8,
+                          bottom: 8,
+                        ), // Replaces Stack positioning
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          image: DecorationImage(
+                            image: NetworkImage(aarti.bgImage), // Uses bgImage
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                        child: const Icon(
-                          Icons.play_arrow,
-                          color: Color(0xFFA63B3B),
-                          size: 18,
+                        // Play button overlay as a direct child
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
+                          child: const Icon(
+                            Icons.play_arrow,
+                            color: Color(0xFFA63B3B),
+                            size: 18,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    aarti.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xFFA63B3B),
+                    const SizedBox(height: 8),
+                    Text(
+                      aarti.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFFA63B3B),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
