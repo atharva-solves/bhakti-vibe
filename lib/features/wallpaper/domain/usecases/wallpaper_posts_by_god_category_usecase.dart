@@ -8,8 +8,8 @@ class WallpaperPostsByGodCategoryUsecase {
     required WallpaperRepository wallpaperRepository,
   }) : _wallpaperRepository = wallpaperRepository;
 
-  Future<List<WallpaperEntity>> call({required String godCategoryId}) async {
-    final List<WallpaperEntity> wallpaperPostsByGodCategory =
+  Future<List<WallpaperEntity>?> call({required String godCategoryId}) async {
+    final List<WallpaperEntity>? wallpaperPostsByGodCategory =
         await _wallpaperRepository.getWallpaperPostsByGodCategory(
           godCategoryId: godCategoryId,
         );
