@@ -8,4 +8,5 @@ class AppRoutes {
   static const String aartiListByFest = '/aarti_list_by_fest';
 
   static const String wallpaperMain = '/wallpaper_main';
+  static const String wallpapersByCategory= '/wallpapers_by_category';
 }

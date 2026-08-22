@@ -1,10 +1,10 @@
 import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_entity.dart';
 import 'package:bhakti_vibe/features/wallpaper/domain/repositories/wallpaper_repository.dart';
 
-class WallpaperPostsByGodCategoryUsecase {
+class WallpapersByCategoryUsecase {
   final WallpaperRepository _wallpaperRepository;
 
-  WallpaperPostsByGodCategoryUsecase({
+  WallpapersByCategoryUsecase({
     required WallpaperRepository wallpaperRepository,
   }) : _wallpaperRepository = wallpaperRepository;
 

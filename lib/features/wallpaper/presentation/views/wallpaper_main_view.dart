@@ -1,3 +1,5 @@
+import 'package:bhakti_vibe/core/routes/app_routes.dart';
+import 'package:bhakti_vibe/features/wallpaper/presentation/args/wallpaperPostsByGodCategoryArgs.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_gof_category_entity.dart';
@@ -102,7 +104,13 @@ class WallpaperMainView extends GetView<WallpaperMainController> {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: GestureDetector(
               onTap: () {
-                // TODO: handle category tap
+                Get.toNamed(
+                  AppRoutes.wallpapersByCategory,
+                  arguments: WallpapersByCategoryArgs(
+                    categoryName: category.catName,
+                    id: category.id,
+                  ),
+                );
               },
               child: Column(
                 children: [

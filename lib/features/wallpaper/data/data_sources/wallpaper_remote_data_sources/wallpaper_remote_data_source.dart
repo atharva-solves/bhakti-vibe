@@ -42,7 +42,7 @@ class WallpaperRemoteDataSourceImpl implements WallpaperRemoteDataSource {
     try {
       final response = await _dioClient.get(
         endpoint: ApiEndpoints.wallpaperPosts,
-        queryParameters: {'id': godCategoryId},
+        queryParameters: {'category_id': godCategoryId},
       );
       if (response is List && response[0] is String) {
         return null;
@@ -50,7 +50,7 @@ class WallpaperRemoteDataSourceImpl implements WallpaperRemoteDataSource {
 
       final List<dynamic> jsonList = response as List<dynamic>;
       final List<WallpaperModel> wallpaperPostsByGodCategory = jsonList
-          .map((json) => WallpaperModel.fromJson(json: json))
+          .map((json) => WallpaperModel.fromGodCategoryJson(json: json))
           .toList();
       return wallpaperPostsByGodCategory;
     } catch (e) {
