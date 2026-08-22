@@ -22,10 +22,6 @@ class AartiPlayerBinding extends Bindings {
       () => GetSingleAartiUsecase(aartiRepository: Get.find<AartiRepository>()),
     );
 
-    Get.lazyPut<AartiPlayerController>(
-      () => AartiPlayerController(
-        getSingleAartiUsecase: Get.find<GetSingleAartiUsecase>(),
-      ),
-    );
+    Get.lazyPut<AartiPlayerController>(() => AartiPlayerController());
   }
 }

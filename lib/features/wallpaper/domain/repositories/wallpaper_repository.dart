@@ -6,4 +6,6 @@ abstract class WallpaperRepository {
   Future<List<WallpaperEntity>?> getWallpaperPostsByGodCategory({
     required String godCategoryId,
   });
+
+  Future<List<WallpaperEntity>> getRecentlyUsedWallpapers();
 }

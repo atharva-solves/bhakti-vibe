@@ -1,5 +1,4 @@
 import 'package:bhakti_vibe/features/aarti/domain/entities/aarti_entity.dart';
-import 'package:bhakti_vibe/features/aarti/domain/usecases/get_single_aarti_usecase.dart';
 import 'package:bhakti_vibe/features/aarti/presentation/args/aarti_player_args.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -7,10 +6,10 @@ import 'package:just_audio/just_audio.dart';
 // import 'path_to/aarti_player_args.dart'; 
 
 class AartiPlayerController extends GetxController {
-  final GetSingleAartiUsecase _getSingleAartiUsecase;
+  
 
-  AartiPlayerController({required GetSingleAartiUsecase getSingleAartiUsecase})
-      : _getSingleAartiUsecase = getSingleAartiUsecase;
+  AartiPlayerController();
+      
 
   // UI State
   final RxBool isLoading = false.obs;

@@ -26,4 +26,11 @@ class WallpaperRepoImpl implements WallpaperRepository {
         );
     return wallpaperPostsByGodCategory;
   }
+
+  @override
+  Future<List<WallpaperEntity>> getRecentlyUsedWallpapers() async {
+    final List<WallpaperEntity> recentWallpapers =
+        await _wallpaperRemoteDataSource.getRecentlyUsedWallpapers();
+    return recentWallpapers;
+  }
 }

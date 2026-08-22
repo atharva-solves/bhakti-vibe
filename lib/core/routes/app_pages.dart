@@ -8,9 +8,10 @@ import 'package:bhakti_vibe/features/aarti/presentation/views/aarti_list_by_fest
 import 'package:bhakti_vibe/features/aarti/presentation/views/aarti_player_view.dart';
 import 'package:bhakti_vibe/features/root_dashboard/presentation/bindings/root_binding.dart';
 import 'package:bhakti_vibe/features/root_dashboard/presentation/views/root_view.dart';
-import 'package:bhakti_vibe/features/wallpaper/domain/usecases/wallpaper_posts_by_god_category_usecase.dart';
+import 'package:bhakti_vibe/features/wallpaper/presentation/bindings/wallpaper_full_screen_binding.dart';
 import 'package:bhakti_vibe/features/wallpaper/presentation/bindings/wallpaper_main_binding.dart';
 import 'package:bhakti_vibe/features/wallpaper/presentation/bindings/wallpapers_by_category_binding.dart';
+import 'package:bhakti_vibe/features/wallpaper/presentation/views/wallpaper_full_screen_view.dart';
 import 'package:bhakti_vibe/features/wallpaper/presentation/views/wallpaper_posts_by_category_view.dart';
 //import 'package:bhakti_vibe/features/wallpaper/presentation/bindings/wallpaper_main_binding.dart';
 //import 'package:bhakti_vibe/features/wallpaper/presentation/views/wallpaper_main_view.dart';
@@ -51,6 +52,11 @@ class AppPages {
       name: AppRoutes.wallpapersByCategory,
       page: () => const WallpapersByCategoryView(),
       binding: WallpapersByCategoryBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.wallpaperFullScreen,
+      page: () => const WallpaperFullScreenView(),
+      binding: WallpaperFullScreenBinding(),
     ),
   ];
 }

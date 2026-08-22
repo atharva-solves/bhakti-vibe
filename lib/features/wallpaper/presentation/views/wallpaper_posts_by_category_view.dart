@@ -1,3 +1,5 @@
+import 'package:bhakti_vibe/core/routes/app_routes.dart';
+import 'package:bhakti_vibe/features/wallpaper/presentation/args/wallpaper_full_screen_args.dart';
 import 'package:bhakti_vibe/features/wallpaper/presentation/controllers/wallpaper_posts_by_god_category_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -74,24 +76,37 @@ class WallpapersByCategoryView extends GetView<WallpapersByCategoryController> {
             final WallpaperEntity wallpaper =
                 controller.wallpapersByCategory[index];
 
-            return ClipRRect(
-              borderRadius: BorderRadius.circular(12.0),
-              child: Image.network(
-                wallpaper.images,
-                fit: BoxFit.cover,
-                // Optional: Adds a smooth loading effect for network images
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Container(
-                    color: Colors.black12,
-                    child: const Center(
-                      child: CircularProgressIndicator(
-                        color: Color(0xFFA63B3B),
-                        strokeWidth: 2,
+            return GestureDetector(
+              onTap: () {
+                Get.toNamed(
+                  AppRoutes.wallpaperFullScreen,
+                  arguments: WallpaperFullScreenArgs(
+                    categoryTitle: controller.categoryName.value,
+                    currentWallpaper: wallpaper,
+                    currentIndex: index,
+                    wallpapers: controller.wallpapersByCategory,
+                  ),
+                );
+              },
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.0),
+                child: Image.network(
+                  wallpaper.images,
+                  fit: BoxFit.cover,
+                  // Optional: Adds a smooth loading effect for network images
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      color: Colors.black12,
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFFA63B3B),
+                          strokeWidth: 2,
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             );
           },
