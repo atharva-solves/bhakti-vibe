@@ -3,7 +3,7 @@ import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_gof_cat
 
 abstract class WallpaperRepository {
   Future<List<WallpaperGodCategoryEntity>> getWallpaperGodCategories();
-  Future<List<WallpaperEntity>>? getWallpaperPostsByGodCategory({
+  Future<List<WallpaperEntity>?> getWallpaperPostsByGodCategory({
     required String godCategoryId,
   });
 }
