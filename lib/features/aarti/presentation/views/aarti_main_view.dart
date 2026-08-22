@@ -9,29 +9,12 @@ import 'package:bhakti_vibe/features/aarti/presentation/controllers/aarti_main_c
 
 class AartiMainView extends GetView<AartiMainController> {
   const AartiMainView({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // Matching the warm background color from the design
       backgroundColor: const Color(0xFFFCF4EE),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFFA63B3B)),
-          onPressed: () => Get.back(),
-        ),
-        title: const Text(
-          'Aarti',
-          style: TextStyle(
-            color: Color(0xFFA63B3B),
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-      ),
+
       body: Obx(() {
         if (controller.isLoading.isTrue) {
           return const Center(

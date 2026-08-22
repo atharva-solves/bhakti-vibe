@@ -1,28 +1,48 @@
 import 'package:bhakti_vibe/core/routes/app_routes.dart';
 import 'package:bhakti_vibe/features/aarti/presentation/bindings/aarti_list_binding.dart';
 import 'package:bhakti_vibe/features/aarti/presentation/bindings/aarti_main_binding.dart';
+//import 'package:bhakti_vibe/features/aarti/presentation/bindings/aarti_main_binding.dart';
 import 'package:bhakti_vibe/features/aarti/presentation/bindings/aarti_player_binding.dart';
 import 'package:bhakti_vibe/features/aarti/presentation/views/aarti_list_by_fest_view.dart.dart';
-import 'package:bhakti_vibe/features/aarti/presentation/views/aarti_main_view.dart';
+//import 'package:bhakti_vibe/features/aarti/presentation/views/aarti_main_view.dart';
 import 'package:bhakti_vibe/features/aarti/presentation/views/aarti_player_view.dart';
+import 'package:bhakti_vibe/features/root_dashboard/presentation/bindings/root_binding.dart';
+import 'package:bhakti_vibe/features/root_dashboard/presentation/views/root_view.dart';
+import 'package:bhakti_vibe/features/wallpaper/presentation/bindings/wallpaper_main_binding.dart';
+//import 'package:bhakti_vibe/features/wallpaper/presentation/bindings/wallpaper_main_binding.dart';
+//import 'package:bhakti_vibe/features/wallpaper/presentation/views/wallpaper_main_view.dart';
 import 'package:get/get.dart';
 
 class AppPages {
   static final List<GetPage> pages = [
     GetPage(
-      name: AppRoutes.aartiMain,
-      page: () => AartiMainView(),
-      binding: AartiMainBinding(),
+      name: AppRoutes.rootDashboard,
+      page: () => const RootView(),
+      bindings: [RootBinding(), AartiMainBinding(), WallpaperMainBinding()],
     ),
+
+    //changed : we'll not nav to aarti main and wallp main
+    //we'll nav to root ()--> which will call aarti/wallp scaffold ()
+    /* GetPage(
+      name: AppRoutes.aartiMain,
+      page: () => const AartiMainView(),
+      binding: AartiMainBinding(),
+    ), */
     GetPage(
       name: AppRoutes.aartiPlayer,
-      page: () => AartiPlayerView(),
+      page: () => const AartiPlayerView(),
       binding: AartiPlayerBinding(),
     ),
     GetPage(
       name: AppRoutes.aartiListByFest,
-      page: () => AartiListByFestView(),
+      page: () => const AartiListByFestView(),
       binding: AartiListByFestBinding(),
     ),
+
+    /* GetPage(
+      name: AppRoutes.wallpaperMain,
+      page: () => const WallpaperMainView(),
+      binding: WallpaperMainBinding(),
+    ), */
   ];
 }
