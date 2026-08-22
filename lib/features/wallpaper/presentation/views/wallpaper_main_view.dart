@@ -1,5 +1,8 @@
 import 'package:bhakti_vibe/core/routes/app_routes.dart';
 import 'package:bhakti_vibe/features/wallpaper/presentation/args/wallpaperPostsByGodCategoryArgs.dart';
+// Import the full screen args class
+import 'package:bhakti_vibe/features/wallpaper/presentation/args/wallpaper_full_screen_args.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_gof_category_entity.dart';
@@ -11,18 +14,14 @@ class WallpaperMainView extends GetView<WallpaperMainController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Using the same warm background tone as Aarti view for consistency
       backgroundColor: const Color(0xFFFCF4EE),
-
       body: Obx(() {
-        // Show a loader while we fetch the categories
         if (controller.isLoading.isTrue) {
           return const Center(
             child: CircularProgressIndicator(color: Color(0xFFA63B3B)),
           );
         }
 
-        // Show a basic error text if the API fails
         if (controller.errorMessage.isNotEmpty) {
           return Center(
             child: Text(
@@ -32,20 +31,28 @@ class WallpaperMainView extends GetView<WallpaperMainController> {
           );
         }
 
-        // Main scrollable area
         return SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // We only want to draw this section if the list actually has data
+              // Gods category section
               if (controller.wallpGodCategories.isNotEmpty) ...[
-                const SizedBox(
-                  height: 16,
-                ), // A bit of top padding before the list starts
-                _buildSectionHeader(),
+                const SizedBox(height: 16),
+                _buildSectionTitle('Gods'),
                 _buildGodCategoriesList(),
               ],
+
+              // Recently Used wallpapers section
+              if (controller.recentlyUsedWllpapers.isNotEmpty) ...[
+                const SizedBox(
+                  height: 24,
+                ), // Give some breathing room between sections
+                _buildSectionTitle('Recently Used'),
+                _buildRecentlyUsedList(),
+              ],
+
+              const SizedBox(height: 24), // Bottom padding
             ],
           ),
         );
@@ -53,44 +60,25 @@ class WallpaperMainView extends GetView<WallpaperMainController> {
     );
   }
 
-  // Builds the "Gods" title and the "View all" button aligned to opposite ends
-  Widget _buildSectionHeader() {
+  // Simplified header method that just takes a string and prints it without the "View all" button
+  Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text(
-            'Gods',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              // TODO: wire up navigation to the full list view
-            },
-            child: const Text(
-              'View all',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.black54,
-              ),
-            ),
-          ),
-        ],
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: Colors.black87,
+        ),
       ),
     );
   }
 
-  // Builds the horizontal scrolling list of round god images
+  // The existing God Categories horizontal list
   Widget _buildGodCategoriesList() {
     return SizedBox(
-      height:
-          110, // Hardcoded height so the circles and text fit nicely without overflowing
+      height: 110,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
@@ -119,7 +107,6 @@ class WallpaperMainView extends GetView<WallpaperMainController> {
                     width: 72,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      // Change .image here to whatever your image URL property is named in the entity
                       image: DecorationImage(
                         image: NetworkImage(category.catImage),
                         fit: BoxFit.cover,
@@ -128,7 +115,6 @@ class WallpaperMainView extends GetView<WallpaperMainController> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    // Change .name here to whatever your text property is named in the entity
                     category.catName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -139,6 +125,63 @@ class WallpaperMainView extends GetView<WallpaperMainController> {
                     ),
                   ),
                 ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // The new Recently Used horizontal list
+  Widget _buildRecentlyUsedList() {
+    return SizedBox(
+      height: 180, // Fixed height for the wallpaper cards
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+        itemCount: controller.recentlyUsedWllpapers.length,
+        itemBuilder: (context, index) {
+          // Cast the item as WallpaperEntity to access its properties safely
+          final WallpaperEntity wallpaper =
+              controller.recentlyUsedWllpapers[index];
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: GestureDetector(
+              onTap: () {
+                // Navigate to full screen view and pass all required arguments
+                Get.toNamed(
+                  AppRoutes.wallpaperFullScreen,
+                  arguments: WallpaperFullScreenArgs(
+                    currentWallpaper: wallpaper,
+                    currentIndex: index,
+                    // We need to convert the RxList to a standard List for the arguments
+                    wallpapers: controller.recentlyUsedWllpapers
+                        .cast<WallpaperEntity>()
+                        .toList(),
+                  ),
+                );
+              },
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(
+                  12.0,
+                ), // Rounded corners like in Figma
+                child: SizedBox(
+                  width: 120, // Give each card a fixed width
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      // The wallpaper image itself
+                      Image.network(
+                        // Make sure to change 'imageUrl' to the actual variable name in your entity
+                        wallpaper.images,
+                        fit: BoxFit.cover,
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           );
