@@ -3,7 +3,7 @@ import 'package:bhakti_vibe/features/aarti/domain/entities/festival_category_ent
 
 abstract class AartiRepository {
   Future<List<FestivalCategoryEntity>> getFestivalCategories();
-  Future<List<AartiEntity>> getAartiListByFestival({required String festivalId});
+  Future<List<AartiEntity>?> getAartiListByFestival({required String festivalId});
   Future<AartiEntity> getSingleAarti({required String aartiId});
 
   Future<List<AartiEntity>>getTrendingAartis();

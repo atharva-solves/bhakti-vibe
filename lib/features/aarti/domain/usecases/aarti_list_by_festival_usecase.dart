@@ -7,8 +7,8 @@ class AartiListByFestivalUsecase {
   AartiListByFestivalUsecase({required AartiRepository aartiRepository})
     : _aartiRepository = aartiRepository;
 
-  Future<List<AartiEntity>> call({required String festivalId}) async {
-    final List<AartiEntity> aartiListByFestival = await _aartiRepository
+  Future<List<AartiEntity>?> call({required String festivalId}) async {
+    final List<AartiEntity>? aartiListByFestival = await _aartiRepository
         .getAartiListByFestival(festivalId: festivalId);
     return aartiListByFestival;
   }

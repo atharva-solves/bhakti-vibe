@@ -9,12 +9,12 @@ class AartiRepositoryImpl implements AartiRepository {
   AartiRepositoryImpl({required AartiRemoteDataSource aartiRemoteDataSource})
     : _aartiRemoteDataSource = aartiRemoteDataSource;
   @override
-  Future<List<AartiEntity>> getAartiListByFestival({
+  Future<List<AartiEntity>?> getAartiListByFestival({
     required String festivalId,
   }) async {
     try {
-      final List<AartiEntity> aartiListByFestival = await _aartiRemoteDataSource
-          .getAartiListByFestival(festivalId: festivalId);
+      final List<AartiEntity>? aartiListByFestival = await _aartiRemoteDataSource
+          .getAartiListByFestival(festivalCategoryId: festivalId);
       return aartiListByFestival;
     } catch (e) {
       rethrow;

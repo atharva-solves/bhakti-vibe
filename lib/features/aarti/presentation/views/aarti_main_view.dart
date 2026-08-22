@@ -1,4 +1,5 @@
 import 'package:bhakti_vibe/core/routes/app_routes.dart';
+import 'package:bhakti_vibe/features/aarti/presentation/args/aarti_list_by_festival_args.dart';
 import 'package:bhakti_vibe/features/aarti/presentation/args/aarti_player_args.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -183,7 +184,7 @@ class AartiMainView extends GetView<AartiMainController> {
               child: GestureDetector(
                 onTap: () {
                   debugPrint(
-                    'Aarti main :recently : on tap: aarti main image ==> ${aarti.mainImage}',
+                    'Aarti main :trending : on tap: aarti main image ==> ${aarti.mainImage}',
                   );
                   // Navigate to Player and pass the custom arguments class
                   Get.toNamed(
@@ -262,60 +263,74 @@ class AartiMainView extends GetView<AartiMainController> {
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         itemCount: controller.festivalCategories.length,
         itemBuilder: (context, index) {
-          final FestivalCategoryEntity category =
+          final FestivalCategoryEntity festivalCategory =
               controller.festivalCategories[index];
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: SizedBox(
               width: 120,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    // Stack replaced with Container
-                    child: Container(
-                      alignment:
-                          Alignment.bottomLeft, // Aligns child to bottom-left
-                      padding: const EdgeInsets.only(
-                        left: 8,
-                        bottom: 8,
-                      ), // Replaces Stack positioning
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        image: DecorationImage(
-                          image: NetworkImage(
-                            category.catImage,
-                          ), // Uses catImage
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      // Play button overlay as a direct child
+              child: GestureDetector(
+                onTap: () {
+                  debugPrint(
+                    'Aarti main :festival category : on tap:  festival image ==> ${festivalCategory.catImage}',
+                  );
+                  // Navigate to Player and pass the custom arguments class
+                  Get.toNamed(
+                    AppRoutes.aartiListByFest, // Use your actual route name
+                    arguments: AartiListByFestArgs(
+                      festivalCategoryId: festivalCategory.id,
+                    ),
+                  );
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      // Stack replaced with Container
                       child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
+                        alignment:
+                            Alignment.bottomLeft, // Aligns child to bottom-left
+                        padding: const EdgeInsets.only(
+                          left: 8,
+                          bottom: 8,
+                        ), // Replaces Stack positioning
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          image: DecorationImage(
+                            image: NetworkImage(
+                              festivalCategory.catImage,
+                            ), // Uses catImage
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                        child: const Icon(
-                          Icons.play_arrow,
-                          color: Color(0xFFA63B3B),
-                          size: 18,
+                        // Play button overlay as a direct child
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
+                          child: const Icon(
+                            Icons.play_arrow,
+                            color: Color(0xFFA63B3B),
+                            size: 18,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    category.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xFFA63B3B),
+                    const SizedBox(height: 8),
+                    Text(
+                      festivalCategory.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFFA63B3B),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );

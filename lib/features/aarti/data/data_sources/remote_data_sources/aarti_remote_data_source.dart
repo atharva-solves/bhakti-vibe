@@ -6,8 +6,8 @@ import 'package:bhakti_vibe/features/aarti/data/data_models/festival_category_da
 
 abstract class AartiRemoteDataSource {
   Future<List<FestivalCategoryDataModel>> getFestivalCategories();
-  Future<List<AartiDataModel>> getAartiListByFestival({
-    required String festivalId,
+  Future<List<AartiDataModel>?> getAartiListByFestival({
+    required String festivalCategoryId,
   });
   Future<AartiDataModel> getSingleAarti({required String aartiId});
 
@@ -29,10 +29,10 @@ class AartiRemoteDataSourceImpl implements AartiRemoteDataSource {
         endpoint: ApiEndpoints.festivalCategoryList,
       );
 
-      Map<String, dynamic> mapresponseWithDataWrapper =
+      Map<String, dynamic> mapResponseWithDataWrapper =
           responseData as Map<String, dynamic>;
       List<dynamic> jsonList =
-          mapresponseWithDataWrapper['data'] as List<dynamic>;
+          mapResponseWithDataWrapper['data'] as List<dynamic>;
       List<FestivalCategoryDataModel> festivalCategories = jsonList
           .map(
             (json) => FestivalCategoryDataModel.fromJson(
@@ -52,19 +52,28 @@ class AartiRemoteDataSourceImpl implements AartiRemoteDataSource {
   }
 
   @override
-  Future<List<AartiDataModel>> getAartiListByFestival({
-    required String festivalId,
+  Future<List<AartiDataModel>?> getAartiListByFestival({
+    required String festivalCategoryId,
   }) async {
     try {
       debugPrint(
-        'AartiRemoteDataSource: Fetching Aarti list for festivalId: $festivalId...',
+        'AartiRemoteDataSource: Fetching Aarti list for festivalId: $festivalCategoryId...',
       );
       final responseData = await _dioClient.get(
         endpoint: ApiEndpoints.aartiListByFestival,
-        queryParameters: {'id': festivalId},
+        queryParameters: {'category_id': festivalCategoryId},
       );
 
+     if(responseData is List){
+       if (responseData.isEmpty || responseData[0] is String) {
+        return null;
+      }
+
+     }
+       
       final List<dynamic> jsonList = responseData as List<dynamic>;
+
+     
       final List<AartiDataModel> aartiListByFestival = jsonList
           .map(
             (json) =>
@@ -73,7 +82,7 @@ class AartiRemoteDataSourceImpl implements AartiRemoteDataSource {
           .toList();
 
       debugPrint(
-        'AartiRemoteDataSource: Successfully fetched ${aartiListByFestival.length} Aartis for festivalId: $festivalId.',
+        'AartiRemoteDataSource: Successfully fetched ${aartiListByFestival.length} Aartis for festivalId: $festivalCategoryId.',
       );
       return aartiListByFestival;
     } catch (e) {

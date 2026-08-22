@@ -4,7 +4,7 @@ class ApiEndpoints {
   static const String baseUrl = 'https://appy.trycatchtech.com/v3/all_god/';
 
   static const String festivalCategoryList = 'all_god_festival_list';
-  static const String aartiListByFestival = 'arti_list_by_festival';
+  static const String aartiListByFestival = 'aarti_list_by_festival';
   static const String getSingleAarti = 'get_single_aarti';
   static const String trendingAarti = 'trending_aarti?category_id=1,2';
   static const String recentlyPlayedAarti = 'trending_aarti?category_id=1,3';
