@@ -9,6 +9,7 @@ abstract class WallpaperRemoteDataSource {
     required String godCategoryId,
   });
   Future<List<WallpaperModel>> getRecentlyUsedWallpapers();
+  Future<List<WallpaperModel>> getTrendingWallpapers();
 }
 
 class WallpaperRemoteDataSourceImpl implements WallpaperRemoteDataSource {
@@ -71,6 +72,23 @@ class WallpaperRemoteDataSourceImpl implements WallpaperRemoteDataSource {
           .toList();
 
       return recentlyUsedWallpapers;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<WallpaperModel>> getTrendingWallpapers() async {
+    try {
+      final response = await _dioClient.get(
+        endpoint: ApiEndpoints.trendingWallpapers,
+      );
+      final List<dynamic> jsonList = response as List<dynamic>;
+      final List<WallpaperModel> trendingWallpapers = jsonList
+          .map((json) => WallpaperModel.fromTrendingJson(json: json))
+          .toList();
+
+      return trendingWallpapers;
     } catch (e) {
       rethrow;
     }

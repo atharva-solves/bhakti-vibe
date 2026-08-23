@@ -8,6 +8,8 @@ import 'package:bhakti_vibe/features/aarti/presentation/views/aarti_list_by_fest
 import 'package:bhakti_vibe/features/aarti/presentation/views/aarti_player_view.dart';
 import 'package:bhakti_vibe/features/root_dashboard/presentation/bindings/root_binding.dart';
 import 'package:bhakti_vibe/features/root_dashboard/presentation/views/root_view.dart';
+import 'package:bhakti_vibe/features/splash/presentation/bindings/splash_binding.dart';
+import 'package:bhakti_vibe/features/splash/presentation/views/bhakti_vibe_splash_view.dart';
 import 'package:bhakti_vibe/features/wallpaper/presentation/bindings/wallpaper_full_screen_binding.dart';
 import 'package:bhakti_vibe/features/wallpaper/presentation/bindings/wallpaper_main_binding.dart';
 import 'package:bhakti_vibe/features/wallpaper/presentation/bindings/wallpapers_by_category_binding.dart';
@@ -19,6 +21,11 @@ import 'package:get/get.dart';
 
 class AppPages {
   static final List<GetPage> pages = [
+    GetPage(
+      name: AppRoutes.splash,
+      page: () => const SplashView(),
+      binding: SplashBinding(),
+    ),
     GetPage(
       name: AppRoutes.rootDashboard,
       page: () => const RootView(),

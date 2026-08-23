@@ -33,4 +33,11 @@ class WallpaperRepoImpl implements WallpaperRepository {
         await _wallpaperRemoteDataSource.getRecentlyUsedWallpapers();
     return recentWallpapers;
   }
+
+  @override
+  Future<List<WallpaperEntity>> getTrendingWallpapers() async {
+    final List<WallpaperEntity> trendingWallpapers =
+        await _wallpaperRemoteDataSource.getTrendingWallpapers();
+    return trendingWallpapers;
+  }
 }

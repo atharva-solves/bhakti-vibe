@@ -3,6 +3,7 @@ import 'package:bhakti_vibe/features/wallpaper/data/data_sources/wallpaper_remot
 import 'package:bhakti_vibe/features/wallpaper/data/repository_implementation/wallpaper_repo_impl.dart';
 import 'package:bhakti_vibe/features/wallpaper/domain/repositories/wallpaper_repository.dart';
 import 'package:bhakti_vibe/features/wallpaper/domain/usecases/recently_used_wallpaper_usecase.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/usecases/trending_wallpapers_usecase.dart';
 import 'package:bhakti_vibe/features/wallpaper/domain/usecases/wallpaper_god_categories_usecase.dart';
 import 'package:bhakti_vibe/features/wallpaper/presentation/controllers/wallpaper_main_controller.dart';
 import 'package:get/instance_manager.dart';
@@ -29,11 +30,18 @@ class WallpaperMainBinding extends Bindings {
       ),
     );
 
+    Get.lazyPut<TrendingWallpapersUsecase>(
+      () => TrendingWallpapersUsecase(
+        wallpaperRepository: Get.find<WallpaperRepository>(),
+      ),
+    );
+
     Get.lazyPut<WallpaperMainController>(
       () => WallpaperMainController(
         wallpaperGodCategoriesUsecase:
             Get.find<WallpaperGodCategoriesUsecase>(),
         recentlyUsedWallpaperUsecase: Get.find<RecentlyUsedWallpaperUsecase>(),
+        trendingWallpapersUsecase: Get.find<TrendingWallpapersUsecase>(),
       ),
     );
   }

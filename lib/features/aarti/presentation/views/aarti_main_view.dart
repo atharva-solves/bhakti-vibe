@@ -9,63 +9,56 @@ import 'package:bhakti_vibe/features/aarti/presentation/controllers/aarti_main_c
 
 class AartiMainView extends GetView<AartiMainController> {
   const AartiMainView({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // Matching the warm background color from the design
-      backgroundColor: const Color(0xFFFCF4EE),
+    return Obx(() {
+      if (controller.isLoading.isTrue) {
+        return const Center(
+          child: CircularProgressIndicator(color: Color(0xFFA63B3B)),
+        );
+      }
 
-      body: Obx(() {
-        if (controller.isLoading.isTrue) {
-          return const Center(
-            child: CircularProgressIndicator(color: Color(0xFFA63B3B)),
-          );
-        }
-
-        if (controller.errorMessage.isNotEmpty) {
-          return Center(
-            child: Text(
-              controller.errorMessage.value,
-              style: const TextStyle(color: Colors.red),
-            ),
-          );
-        }
-
-        // SingleChildScrollView allows the whole page to scroll vertically
-        return SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (controller.recentlyPlayedAartis.isNotEmpty) ...[
-                _buildSectionTitle('Recently Played'),
-                _buildRecentlyPlayedList(),
-                const SizedBox(height: 24),
-              ],
-
-              if (controller.trendingAartis.isNotEmpty) ...[
-                _buildSectionTitle("Trending Aarti's"),
-                _buildTrendingList(),
-                const SizedBox(height: 24),
-              ],
-
-              if (controller.festivalCategories.isNotEmpty) ...[
-                _buildSectionTitle('Festivals'),
-                _buildFestivalList(),
-                const SizedBox(height: 32),
-              ],
-            ],
+      if (controller.errorMessage.isNotEmpty) {
+        return Center(
+          child: Text(
+            controller.errorMessage.value,
+            style: const TextStyle(color: Colors.red),
           ),
         );
-      }),
-    );
+      }
+
+      // Fixed height view: components will dynamically scale via Expanded
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (controller.recentlyPlayedAartis.isNotEmpty) ...[
+            _buildSectionTitle('Recently Played'),
+            Expanded(child: _buildRecentlyPlayedList()),
+            const SizedBox(height: 12),
+          ],
+
+          if (controller.trendingAartis.isNotEmpty) ...[
+            _buildSectionTitle("Trending Aarti's"),
+            Expanded(child: _buildTrendingList()),
+            const SizedBox(height: 12),
+          ],
+
+          if (controller.festivalCategories.isNotEmpty) ...[
+            _buildSectionTitle('Festivals'),
+            Expanded(child: _buildFestivalList()),
+            const SizedBox(height: 16),
+          ],
+        ],
+      );
+    });
   }
 
   // --- UI Components ---
 
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
       child: Text(
         title,
         style: const TextStyle(
@@ -78,247 +71,227 @@ class AartiMainView extends GetView<AartiMainController> {
   }
 
   Widget _buildRecentlyPlayedList() {
-    return SizedBox(
-      height: 160,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        itemCount: controller.recentlyPlayedAartis.length,
-        itemBuilder: (context, index) {
-          final AartiEntity aarti = controller.recentlyPlayedAartis[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: GestureDetector(
-              onTap: () {
-                debugPrint(
-                  'Aarti main :recently : on tap: aarti main image ==> ${aarti.mainImage}',
-                );
-                // Navigate to Player and pass the custom arguments class
-                Get.toNamed(
-                  AppRoutes.aartiPlayer, // Use your actual route name
-                  arguments: AartiPlayerArgs(
-                    aartiTitle: aarti.title,
-                    mainImage: aarti.mainImage,
-                    aartiAudio: aarti.audio,
-                    aartiList:
-                        controller.recentlyPlayedAartis, // Pass the whole list
-                    currentIndex: index, // Pass the tapped index
-                  ),
-                );
-              },
-              child: SizedBox(
-                width: 110,
-                child: Column(
-                  children: [
-                    Container(
-                      height: 120,
-                      width: 110,
-                      decoration: BoxDecoration(
-                        // Creating the arched/tombstone shape shown in the design
-                        borderRadius: const BorderRadius.vertical(
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      itemCount: controller.recentlyPlayedAartis.length,
+      itemBuilder: (context, index) {
+        final AartiEntity aarti = controller.recentlyPlayedAartis[index];
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: GestureDetector(
+            onTap: () {
+              Get.toNamed(
+                AppRoutes.aartiPlayer,
+                arguments: AartiPlayerArgs(
+                  aartiTitle: aarti.title,
+                  mainImage: aarti.mainImage,
+                  aartiAudio: aarti.audio,
+                  aartiList: controller.recentlyPlayedAartis,
+                  currentIndex: index,
+                ),
+              );
+            },
+            child: Column(
+              children: [
+                // Expanded replaces hardcoded height, AspectRatio dictates width dynamically
+                Expanded(
+                  child: AspectRatio(
+                    aspectRatio: 0.85, // Tombstone shape ratio
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.vertical(
                           top: Radius.circular(60),
                           bottom: Radius.circular(16),
                         ),
                         image: DecorationImage(
-                          image: NetworkImage(
-                            aarti.withoutBgImage,
-                          ), // Uses withoutBgImage
+                          image: AssetImage('assets/images/god_cat_bg.png'),
                           fit: BoxFit.cover,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      aarti.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFFA63B3B),
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(60),
+                          bottom: Radius.circular(16),
+                        ),
+                        child: Image.network(
+                          aarti.withoutBgImage,
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                const SizedBox(height: 6),
+                SizedBox(
+                  width: 90, // Limit text width to prevent stretching
+                  child: Text(
+                    aarti.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFFA63B3B),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildTrendingList() {
-    return SizedBox(
-      height: 150,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        itemCount: controller.trendingAartis.length,
-        itemBuilder: (context, index) {
-          final AartiEntity aarti = controller.trendingAartis[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: SizedBox(
-              width: 120,
-              child: GestureDetector(
-                onTap: () {
-                  debugPrint(
-                    'Aarti main :trending : on tap: aarti main image ==> ${aarti.mainImage}',
-                  );
-                  // Navigate to Player and pass the custom arguments class
-                  Get.toNamed(
-                    AppRoutes.aartiPlayer, // Use your actual route name
-                    arguments: AartiPlayerArgs(
-                      aartiTitle: aarti.title,
-                      mainImage: aarti.mainImage,
-                      aartiAudio: aarti.audio,
-                      aartiList: controller
-                          .recentlyPlayedAartis, // Pass the whole list
-                      currentIndex: index, // Pass the tapped index
-                    ),
-                  );
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      // Stack replaced with Container
-                      child: Container(
-                        alignment:
-                            Alignment.bottomLeft, // Aligns child to bottom-left
-                        padding: const EdgeInsets.only(
-                          left: 8,
-                          bottom: 8,
-                        ), // Replaces Stack positioning
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          image: DecorationImage(
-                            image: NetworkImage(aarti.bgImage), // Uses bgImage
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        // Play button overlay as a direct child
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                          ),
-                          child: const Icon(
-                            Icons.play_arrow,
-                            color: Color(0xFFA63B3B),
-                            size: 18,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      aarti.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFFA63B3B),
-                      ),
-                    ),
-                  ],
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      itemCount: controller.trendingAartis.length,
+      itemBuilder: (context, index) {
+        final AartiEntity aarti = controller.trendingAartis[index];
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: GestureDetector(
+            onTap: () {
+              Get.toNamed(
+                AppRoutes.aartiPlayer,
+                arguments: AartiPlayerArgs(
+                  aartiTitle: aarti.title,
+                  mainImage: aarti.mainImage,
+                  aartiAudio: aarti.audio,
+                  aartiList: controller.recentlyPlayedAartis, 
+                  currentIndex: index,
                 ),
-              ),
+              );
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: AspectRatio(
+                    aspectRatio: 1.0, // Square shape from Figma
+                    child: Container(
+                      alignment: Alignment.bottomLeft,
+                      padding: const EdgeInsets.only(left: 8, bottom: 8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        image: DecorationImage(
+                          image: NetworkImage(aarti.bgImage),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        child: const Icon(
+                          Icons.play_arrow,
+                          color: Color(0xFFA63B3B),
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                SizedBox(
+                  width: 90,
+                  child: Text(
+                    aarti.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFFA63B3B),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildFestivalList() {
-    return SizedBox(
-      height: 190,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        itemCount: controller.festivalCategories.length,
-        itemBuilder: (context, index) {
-          final FestivalCategoryEntity festivalCategory =
-              controller.festivalCategories[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: SizedBox(
-              width: 120,
-              child: GestureDetector(
-                onTap: () {
-                  debugPrint(
-                    'Aarti main :festival category : on tap:  festival image ==> ${festivalCategory.catImage}',
-                  );
-                  // Navigate to Player and pass the custom arguments class
-                  Get.toNamed(
-                    AppRoutes.aartiListByFest, // Use your actual route name
-                    arguments: AartiListByFestArgs(
-                      festivalCategoryId: festivalCategory.id,
-                    ),
-                  );
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      // Stack replaced with Container
-                      child: Container(
-                        alignment:
-                            Alignment.bottomLeft, // Aligns child to bottom-left
-                        padding: const EdgeInsets.only(
-                          left: 8,
-                          bottom: 8,
-                        ), // Replaces Stack positioning
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          image: DecorationImage(
-                            image: NetworkImage(
-                              festivalCategory.catImage,
-                            ), // Uses catImage
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        // Play button overlay as a direct child
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                          ),
-                          child: const Icon(
-                            Icons.play_arrow,
-                            color: Color(0xFFA63B3B),
-                            size: 18,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      festivalCategory.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFFA63B3B),
-                      ),
-                    ),
-                  ],
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      itemCount: controller.festivalCategories.length,
+      itemBuilder: (context, index) {
+        final FestivalCategoryEntity festivalCategory =
+            controller.festivalCategories[index];
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: GestureDetector(
+            onTap: () {
+              Get.toNamed(
+                AppRoutes.aartiListByFest,
+                arguments: AartiListByFestArgs(
+                  festivalCategoryId: festivalCategory.id,
                 ),
-              ),
+              );
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: AspectRatio(
+                    aspectRatio: 0.75, // Tall rectangle shape from Figma
+                    child: Container(
+                      alignment: Alignment.bottomLeft,
+                      padding: const EdgeInsets.only(left: 8, bottom: 8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        image: DecorationImage(
+                          image: NetworkImage(festivalCategory.catImage),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        child: const Icon(
+                          Icons.play_arrow,
+                          color: Color(0xFFA63B3B),
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                SizedBox(
+                  width: 90,
+                  child: Text(
+                    festivalCategory.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFFA63B3B),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

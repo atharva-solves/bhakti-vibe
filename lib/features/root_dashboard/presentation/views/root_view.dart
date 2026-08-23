@@ -1,9 +1,12 @@
+import 'package:bhakti_vibe/core/constants/app_assets/app_image_assets.dart';
 import 'package:bhakti_vibe/features/root_dashboard/presentation/controllers/root_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 // Importing  feature views
 import 'package:bhakti_vibe/features/aarti/presentation/views/aarti_main_view.dart';
 import 'package:bhakti_vibe/features/wallpaper/presentation/views/wallpaper_main_view.dart';
+// Make sure to import your AppImageAssets if it's not already globally available
+// import 'package:bhakti_vibe/core/constants/app_assets/app_image_assets.dart';
 
 class RootView extends GetView<RootController> {
   const RootView({super.key});
@@ -40,24 +43,96 @@ class RootView extends GetView<RootController> {
         // Simple conditional rendering (No IndexedStack)
         body: isAarti ? const AartiMainView() : const WallpaperMainView(),
 
-        // Simple Bottom Navigation Bar
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: controller.currentIndex.value,
-          onTap: controller.changeTab,
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.grey,
-          backgroundColor:
-              Colors.white, // Adjust to match Figma's pill container if needed
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.handshake), // Use your specific asset here
-              label: 'Aarti',
+        // I built a custom floating pill container here. Standard BottomNavBars 
+        // make it really hard to get that exact orange border and inner pill shape.
+        bottomNavigationBar: SafeArea(
+          child: Container(
+            margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(40),
+              // Matching the thin orange border from the design
+              border: Border.all(color: const Color(0xFFFF9933), width: 1), 
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.wallpaper), // Use your specific asset here
-              label: 'Wallpaper',
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // --- Aarti Tab ---
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => controller.changeTab(0),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: controller.currentIndex.value == 0 
+                            ? const Color(0xFFFF9933) 
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            controller.currentIndex.value == 0 
+                                ? AppImageAssets.preayWhite 
+                                : AppImageAssets.prayBlack,
+                            height: 20,
+                            // Coloring the icon to grey when inactive just to be safe
+                            color: controller.currentIndex.value == 0 ? Colors.white : Colors.grey,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Aarti',
+                            style: TextStyle(
+                              color: controller.currentIndex.value == 0 ? Colors.white : Colors.grey,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                
+                // --- Wallpaper Tab ---
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => controller.changeTab(1),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: controller.currentIndex.value == 1 
+                            ? const Color(0xFFFF9933) 
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            controller.currentIndex.value == 1 
+                                ? AppImageAssets.wallpIconWhite 
+                                : AppImageAssets.wallpIconBlack,
+                            height: 20,
+                            color: controller.currentIndex.value == 1 ? Colors.white : Colors.grey,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Wallpaper',
+                            style: TextStyle(
+                              color: controller.currentIndex.value == 1 ? Colors.white : Colors.grey,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+               
+              ],
             ),
-          ],
+          ),
         ),
       );
     });

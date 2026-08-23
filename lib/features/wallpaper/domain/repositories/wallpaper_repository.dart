@@ -8,4 +8,5 @@ abstract class WallpaperRepository {
   });
 
   Future<List<WallpaperEntity>> getRecentlyUsedWallpapers();
+  Future<List<WallpaperEntity>> getTrendingWallpapers();
 }

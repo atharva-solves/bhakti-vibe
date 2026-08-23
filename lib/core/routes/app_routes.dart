@@ -1,6 +1,8 @@
 class AppRoutes {
   AppRoutes._();
 
+  static const String splash = '/splash';
+
   static const String rootDashboard = '/root_dashboard';
 
   static const String aartiMain = '/aarti_main';
@@ -8,6 +10,6 @@ class AppRoutes {
   static const String aartiListByFest = '/aarti_list_by_fest';
 
   static const String wallpaperMain = '/wallpaper_main';
-  static const String wallpapersByCategory= '/wallpapers_by_category';
-  static const String wallpaperFullScreen= '/wallpaper_full_screen';
+  static const String wallpapersByCategory = '/wallpapers_by_category';
+  static const String wallpaperFullScreen = '/wallpaper_full_screen';
 }
