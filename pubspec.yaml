@@ -38,6 +38,7 @@ dependencies:
   get: ^4.7.3
   just_audio: ^0.10.6
   audio_video_progress_bar: ^2.0.3
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -93,3 +94,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/bhakti_vibe_logo.png"
+  min_sdk_android: 21
