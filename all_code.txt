@@ -1,0 +1,2860 @@
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\main.dart ---  
+import 'package:bhakti_vibe/core/bindings/initial_binding.dart';
+import 'package:bhakti_vibe/core/routes/app_pages.dart';
+import 'package:bhakti_vibe/core/routes/app_routes.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Bhakti Vibe',
+      initialBinding: InitialBinding(),
+      initialRoute: AppRoutes.splash,
+      getPages: AppPages.pages,
+    );
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\core\bindings\initial_binding.dart ---  
+import 'package:bhakti_vibe/core/network/dio_client.dart';
+import 'package:get/instance_manager.dart';
+
+class InitialBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.put<DioClient>(DioClient(), permanent: true);
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\core\constants\app_assets\app_image_assets.dart ---  
+class AppImageAssets {
+  AppImageAssets._();
+
+  static const String bhaktiVibeAppLogo = 'assets/images/bhakti_vibe_logo.png';
+
+  static const String splashImage =
+      'assets/images/bhakti_vibe_splash_screen.png';
+
+  static const String preayWhite = 'assets/images/pray_white.png';
+
+  static const String prayBlack = 'assets/images/pray_black.png';
+
+  static const String wallpIconWhite = 'assets/images/wallp_icon_white.png';
+
+  static const String wallpIconBlack = 'assets/images/wallp_icon_black.png';
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\core\network\api_endpoints.dart ---  
+class ApiEndpoints {
+  ApiEndpoints._();
+
+  static const String baseUrl = 'https://appy.trycatchtech.com/v3/all_god/';
+
+  static const String festivalCategoryList = 'all_god_festival_list';
+  static const String aartiListByFestival = 'aarti_list_by_festival';
+  static const String getSingleAarti = 'get_single_aarti';
+  static const String trendingAarti = 'trending_aarti?category_id=1,2';
+  static const String recentlyPlayedAarti = 'trending_aarti?category_id=1,3';
+
+  static const String wallpaperCategories='all_god_wallpaper_category_list';
+  static const String wallpaperPosts='all_god_wallpaper_post_list';
+  static const String trendingWallpapers='trending_wallpaper?category_id=1,2';
+  static const String recentlyUsedWallpaper='trending_wallpaper?category_id=1,3';
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\core\network\dio_client.dart ---  
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
+
+import 'package:bhakti_vibe/core/network/api_endpoints.dart';
+import 'package:dio/dio.dart';
+
+class DioClient {
+  final Dio _dio;
+
+  DioClient()
+    : _dio = Dio(
+        BaseOptions(
+          baseUrl: ApiEndpoints.baseUrl,
+          connectTimeout: const Duration(seconds: 15),
+          receiveTimeout: const Duration(seconds: 15),
+          responseType: ResponseType.json,
+        ),
+      ) {
+    debugPrint("DioClient initialized with Base URL: ${ApiEndpoints.baseUrl}");
+  }
+
+  Future<dynamic> get({
+    required String endpoint,
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    try {
+      debugPrint("Starting GET request to endpoint: $endpoint");
+      if (queryParameters != null) {
+        debugPrint("With query parameters: $queryParameters");
+      }
+
+      final response = await _dio.get(
+        endpoint,
+        queryParameters: queryParameters,
+      );
+
+      debugPrint("API hit successful! Status code: ${response.statusCode}");
+
+      var responseData = response.data;
+
+      if (responseData is String) {
+        debugPrint("Response data is a String, converting to JSON...");
+        responseData = jsonDecode(responseData);
+      }
+
+      debugPrint("Returning data from DioClient.");
+      return responseData;
+    } catch (e) {
+      debugPrint("Oops! Error in GET request to $endpoint: $e");
+      rethrow;
+    }
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\core\routes\app_pages.dart ---  
+import 'package:bhakti_vibe/core/routes/app_routes.dart';
+import 'package:bhakti_vibe/features/aarti/presentation/bindings/aarti_list_binding.dart';
+import 'package:bhakti_vibe/features/aarti/presentation/bindings/aarti_main_binding.dart';
+//import 'package:bhakti_vibe/features/aarti/presentation/bindings/aarti_main_binding.dart';
+import 'package:bhakti_vibe/features/aarti/presentation/bindings/aarti_player_binding.dart';
+import 'package:bhakti_vibe/features/aarti/presentation/views/aarti_list_by_fest_view.dart.dart';
+//import 'package:bhakti_vibe/features/aarti/presentation/views/aarti_main_view.dart';
+import 'package:bhakti_vibe/features/aarti/presentation/views/aarti_player_view.dart';
+import 'package:bhakti_vibe/features/root_dashboard/presentation/bindings/root_binding.dart';
+import 'package:bhakti_vibe/features/root_dashboard/presentation/views/root_view.dart';
+import 'package:bhakti_vibe/features/splash/presentation/bindings/splash_binding.dart';
+import 'package:bhakti_vibe/features/splash/presentation/views/bhakti_vibe_splash_view.dart';
+import 'package:bhakti_vibe/features/wallpaper/presentation/bindings/wallpaper_full_screen_binding.dart';
+import 'package:bhakti_vibe/features/wallpaper/presentation/bindings/wallpaper_main_binding.dart';
+import 'package:bhakti_vibe/features/wallpaper/presentation/bindings/wallpapers_by_category_binding.dart';
+import 'package:bhakti_vibe/features/wallpaper/presentation/views/wallpaper_full_screen_view.dart';
+import 'package:bhakti_vibe/features/wallpaper/presentation/views/wallpaper_posts_by_category_view.dart';
+//import 'package:bhakti_vibe/features/wallpaper/presentation/bindings/wallpaper_main_binding.dart';
+//import 'package:bhakti_vibe/features/wallpaper/presentation/views/wallpaper_main_view.dart';
+import 'package:get/get.dart';
+
+class AppPages {
+  static final List<GetPage> pages = [
+    GetPage(
+      name: AppRoutes.splash,
+      page: () => const SplashView(),
+      binding: SplashBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.rootDashboard,
+      page: () => const RootView(),
+      bindings: [RootBinding(), AartiMainBinding(), WallpaperMainBinding()],
+    ),
+
+    //changed : we'll not nav to aarti main and wallp main
+    //we'll nav to root ()--> which will call aarti/wallp scaffold ()
+    /* GetPage(
+      name: AppRoutes.aartiMain,
+      page: () => const AartiMainView(),
+      binding: AartiMainBinding(),
+    ), */
+    GetPage(
+      name: AppRoutes.aartiPlayer,
+      page: () => const AartiPlayerView(),
+      binding: AartiPlayerBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.aartiListByFest,
+      page: () => const AartiListByFestView(),
+      binding: AartiListByFestBinding(),
+    ),
+
+    /* GetPage(
+      name: AppRoutes.wallpaperMain,
+      page: () => const WallpaperMainView(),
+      binding: WallpaperMainBinding(),
+    ), */
+    GetPage(
+      name: AppRoutes.wallpapersByCategory,
+      page: () => const WallpapersByCategoryView(),
+      binding: WallpapersByCategoryBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.wallpaperFullScreen,
+      page: () => const WallpaperFullScreenView(),
+      binding: WallpaperFullScreenBinding(),
+    ),
+  ];
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\core\routes\app_routes.dart ---  
+class AppRoutes {
+  AppRoutes._();
+
+  static const String splash = '/splash';
+
+  static const String rootDashboard = '/root_dashboard';
+
+  static const String aartiMain = '/aarti_main';
+  static const String aartiPlayer = '/aarti_player';
+  static const String aartiListByFest = '/aarti_list_by_fest';
+
+  static const String wallpaperMain = '/wallpaper_main';
+  static const String wallpapersByCategory = '/wallpapers_by_category';
+  static const String wallpaperFullScreen = '/wallpaper_full_screen';
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\data\data_models\aarti_data_model.dart ---  
+import 'package:bhakti_vibe/features/aarti/domain/entities/aarti_entity.dart';
+
+class AartiDataModel extends AartiEntity {
+  AartiDataModel({
+    required super.id,
+    required super.title,
+    required super.withoutBgImage,
+    required super.bgImage,
+    required super.audio,
+    required super.mainImage,
+  });
+  factory AartiDataModel.fromJson({required Map<String, dynamic> json}) {
+    return AartiDataModel(
+      id: json['id'] ,
+      title: json['title'] ?? 'untitled',
+      withoutBgImage: json['without_bg_image']?? '',
+      bgImage: json['bg_image']??'',
+      audio: json['audio'],
+      mainImage: json['main_image']??'',
+    );
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\data\data_models\festival_category_data_model.dart ---  
+import 'package:bhakti_vibe/features/aarti/domain/entities/festival_category_entity.dart';
+
+class FestivalCategoryDataModel extends FestivalCategoryEntity {
+  FestivalCategoryDataModel({
+    required super.id,
+    required super.name,
+    required super.catImage,
+  });
+
+  factory FestivalCategoryDataModel.fromJson({
+    required Map<String, dynamic> json,
+  }) {
+    return FestivalCategoryDataModel(
+      id: json['id'],
+      name: json['name'],
+      catImage: json['cat_image']??'',
+    );
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\data\data_sources\remote_data_sources\aarti_remote_data_source.dart ---  
+import 'package:flutter/foundation.dart';
+import 'package:bhakti_vibe/core/network/api_endpoints.dart';
+import 'package:bhakti_vibe/core/network/dio_client.dart';
+import 'package:bhakti_vibe/features/aarti/data/data_models/aarti_data_model.dart';
+import 'package:bhakti_vibe/features/aarti/data/data_models/festival_category_data_model.dart';
+
+abstract class AartiRemoteDataSource {
+  Future<List<FestivalCategoryDataModel>> getFestivalCategories();
+  Future<List<AartiDataModel>?> getAartiListByFestival({
+    required String festivalCategoryId,
+  });
+  Future<AartiDataModel> getSingleAarti({required String aartiId});
+
+  Future<List<AartiDataModel>> getTrendingaAartis();
+  Future<List<AartiDataModel>> getRecentlyPlayedAartis();
+}
+
+class AartiRemoteDataSourceImpl implements AartiRemoteDataSource {
+  final DioClient _dioClient;
+
+  AartiRemoteDataSourceImpl({required DioClient dioClient})
+    : _dioClient = dioClient;
+
+  @override
+  Future<List<FestivalCategoryDataModel>> getFestivalCategories() async {
+    try {
+      debugPrint('AartiRemoteDataSource: Fetching festival categories...');
+      final responseData = await _dioClient.get(
+        endpoint: ApiEndpoints.festivalCategoryList,
+      );
+
+      Map<String, dynamic> mapResponseWithDataWrapper =
+          responseData as Map<String, dynamic>;
+      List<dynamic> jsonList =
+          mapResponseWithDataWrapper['data'] as List<dynamic>;
+      List<FestivalCategoryDataModel> festivalCategories = jsonList
+          .map(
+            (json) => FestivalCategoryDataModel.fromJson(
+              json: json as Map<String, dynamic>,
+            ),
+          )
+          .toList();
+
+      debugPrint(
+        'AartiRemoteDataSource: Successfully fetched ${festivalCategories.length} festival categories.',
+      );
+      return festivalCategories;
+    } catch (e) {
+      debugPrint('AartiRemoteDataSource: Error in getFestivalCategories - $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<AartiDataModel>?> getAartiListByFestival({
+    required String festivalCategoryId,
+  }) async {
+    try {
+      debugPrint(
+        'AartiRemoteDataSource: Fetching Aarti list for festivalId: $festivalCategoryId...',
+      );
+      final responseData = await _dioClient.get(
+        endpoint: ApiEndpoints.aartiListByFestival,
+        queryParameters: {'category_id': festivalCategoryId},
+      );
+
+     if(responseData is List){
+       if (responseData.isEmpty || responseData[0] is String) {
+        return null;
+      }
+
+     }
+       
+      final List<dynamic> jsonList = responseData as List<dynamic>;
+
+     
+      final List<AartiDataModel> aartiListByFestival = jsonList
+          .map(
+            (json) =>
+                AartiDataModel.fromJson(json: json as Map<String, dynamic>),
+          )
+          .toList();
+
+      debugPrint(
+        'AartiRemoteDataSource: Successfully fetched ${aartiListByFestival.length} Aartis for festivalId: $festivalCategoryId.',
+      );
+      return aartiListByFestival;
+    } catch (e) {
+      debugPrint('AartiRemoteDataSource: Error in getAartiListByFestival - $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<AartiDataModel>> getRecentlyPlayedAartis() async {
+    try {
+      debugPrint('AartiRemoteDataSource: Fetching recently played Aartis...');
+      final responseData = await _dioClient.get(
+        endpoint: ApiEndpoints.recentlyPlayedAarti,
+      );
+
+      final List<dynamic> jsonList = responseData as List<dynamic>;
+      final List<AartiDataModel> recentlyPlayedAartis = jsonList
+          .map(
+            (json) =>
+                AartiDataModel.fromJson(json: json as Map<String, dynamic>),
+          )
+          .toList();
+
+      debugPrint(
+        'AartiRemoteDataSource: Successfully fetched ${recentlyPlayedAartis.length} recently played Aartis.',
+      );
+      return recentlyPlayedAartis;
+    } catch (e) {
+      debugPrint(
+        'AartiRemoteDataSource: Error in getRecentlyPlayedAartis - $e',
+      );
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<AartiDataModel>> getTrendingaAartis() async {
+    try {
+      debugPrint('AartiRemoteDataSource: Fetching trending Aartis...');
+      final responseData = await _dioClient.get(
+        endpoint: ApiEndpoints.trendingAarti,
+      );
+
+      final List<dynamic> jsonList = responseData as List<dynamic>;
+      final List<AartiDataModel> trendingAartis = jsonList
+          .map(
+            (json) =>
+                AartiDataModel.fromJson(json: json as Map<String, dynamic>),
+          )
+          .toList();
+
+      debugPrint(
+        'AartiRemoteDataSource: Successfully fetched ${trendingAartis.length} trending Aartis.',
+      );
+      return trendingAartis;
+    } catch (e) {
+      debugPrint('AartiRemoteDataSource: Error in getTrendingaAartis - $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<AartiDataModel> getSingleAarti({required String aartiId}) async {
+    try {
+      debugPrint(
+        'AartiRemoteDataSource: Fetching single Aarti for aartiId: $aartiId...',
+      );
+      final responseData = await _dioClient.get(
+        endpoint: ApiEndpoints.getSingleAarti,
+        queryParameters: {'id': aartiId},
+      );
+
+      final Map<String, dynamic> json = responseData as Map<String, dynamic>;
+      final AartiDataModel singleAarti = AartiDataModel.fromJson(json: json);
+
+      debugPrint(
+        'AartiRemoteDataSource: Successfully fetched single Aarti data for ID: $aartiId.',
+      );
+      return singleAarti;
+    } catch (e) {
+      debugPrint('AartiRemoteDataSource: Error in getSingleAarti - $e');
+      rethrow;
+    }
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\data\repository_implementation\aarti_repository_impl.dart ---  
+import 'package:bhakti_vibe/features/aarti/data/data_sources/remote_data_sources/aarti_remote_data_source.dart';
+import 'package:bhakti_vibe/features/aarti/domain/entities/aarti_entity.dart';
+import 'package:bhakti_vibe/features/aarti/domain/entities/festival_category_entity.dart';
+import 'package:bhakti_vibe/features/aarti/domain/repositories/aarti_repository.dart';
+
+class AartiRepositoryImpl implements AartiRepository {
+  final AartiRemoteDataSource _aartiRemoteDataSource;
+
+  AartiRepositoryImpl({required AartiRemoteDataSource aartiRemoteDataSource})
+    : _aartiRemoteDataSource = aartiRemoteDataSource;
+  @override
+  Future<List<AartiEntity>?> getAartiListByFestival({
+    required String festivalId,
+  }) async {
+    try {
+      final List<AartiEntity>? aartiListByFestival = await _aartiRemoteDataSource
+          .getAartiListByFestival(festivalCategoryId: festivalId);
+      return aartiListByFestival;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<FestivalCategoryEntity>> getFestivalCategories() async {
+    try {
+      final List<FestivalCategoryEntity> festivalCategories =
+          await _aartiRemoteDataSource.getFestivalCategories();
+      return festivalCategories;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<AartiEntity>> getRecentlyPlayedAartis() async {
+    try {
+      final List<AartiEntity> recentlyPlayedAartis =
+          await _aartiRemoteDataSource.getRecentlyPlayedAartis();
+      return recentlyPlayedAartis;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<AartiEntity> getSingleAarti({required String aartiId}) async {
+    try {
+      final AartiEntity singleAarti = await _aartiRemoteDataSource
+          .getSingleAarti(aartiId: aartiId);
+      return singleAarti;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<AartiEntity>> getTrendingAartis() async {
+    try {
+      final List<AartiEntity> trendingAartis = await _aartiRemoteDataSource
+          .getTrendingaAartis();
+      return trendingAartis;
+    } catch (e) {
+      rethrow;
+    }
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\domain\entities\aarti_entity.dart ---  
+class AartiEntity {
+  final String id;
+  final String title;
+  final String withoutBgImage;
+  final String bgImage;
+  final String audio;
+  final String mainImage;
+
+  AartiEntity({
+    required this.id,
+    required this.title,
+    required this.withoutBgImage,
+    required this.bgImage,
+    required this.audio,
+    required this.mainImage,
+  });
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\domain\entities\festival_category_entity.dart ---  
+class FestivalCategoryEntity {
+  final String id;
+  final String name;
+  final String catImage;
+
+  FestivalCategoryEntity({
+    required this.id,
+    required this.name,
+    required this.catImage,
+  });
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\domain\repositories\aarti_repository.dart ---  
+import 'package:bhakti_vibe/features/aarti/domain/entities/aarti_entity.dart';
+import 'package:bhakti_vibe/features/aarti/domain/entities/festival_category_entity.dart';
+
+abstract class AartiRepository {
+  Future<List<FestivalCategoryEntity>> getFestivalCategories();
+  Future<List<AartiEntity>?> getAartiListByFestival({required String festivalId});
+  Future<AartiEntity> getSingleAarti({required String aartiId});
+
+  Future<List<AartiEntity>>getTrendingAartis();
+  Future<List<AartiEntity>>getRecentlyPlayedAartis();
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\domain\usecases\aarti_festival_catagories_usecase.dart ---  
+import 'package:bhakti_vibe/features/aarti/domain/entities/festival_category_entity.dart';
+import 'package:bhakti_vibe/features/aarti/domain/repositories/aarti_repository.dart';
+
+class AartiFestivalCatagoriesUsecase {
+  final AartiRepository _aartiRepo;
+  AartiFestivalCatagoriesUsecase({required AartiRepository aartiRepo})
+    : _aartiRepo = aartiRepo;
+
+  Future<List<FestivalCategoryEntity>> call() async {
+    final List<FestivalCategoryEntity> festivalCategories = await _aartiRepo
+        .getFestivalCategories();
+    return festivalCategories;
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\domain\usecases\aarti_list_by_festival_usecase.dart ---  
+import 'package:bhakti_vibe/features/aarti/domain/entities/aarti_entity.dart';
+import 'package:bhakti_vibe/features/aarti/domain/repositories/aarti_repository.dart';
+
+class AartiListByFestivalUsecase {
+  final AartiRepository _aartiRepository;
+
+  AartiListByFestivalUsecase({required AartiRepository aartiRepository})
+    : _aartiRepository = aartiRepository;
+
+  Future<List<AartiEntity>?> call({required String festivalId}) async {
+    final List<AartiEntity>? aartiListByFestival = await _aartiRepository
+        .getAartiListByFestival(festivalId: festivalId);
+    return aartiListByFestival;
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\domain\usecases\get_single_aarti_usecase.dart ---  
+import 'package:bhakti_vibe/features/aarti/domain/entities/aarti_entity.dart';
+import 'package:bhakti_vibe/features/aarti/domain/repositories/aarti_repository.dart';
+
+class GetSingleAartiUsecase {
+  final AartiRepository _aartiRepository;
+
+  GetSingleAartiUsecase({required AartiRepository aartiRepository})
+    : _aartiRepository = aartiRepository;
+  Future<AartiEntity> call({required String aartiId}) async {
+    final AartiEntity singleAarti = await _aartiRepository.getSingleAarti(
+      aartiId: aartiId,
+    );
+    return singleAarti;
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\domain\usecases\recently_played_aarti_usecase.dart ---  
+import 'package:bhakti_vibe/features/aarti/domain/entities/aarti_entity.dart';
+import 'package:bhakti_vibe/features/aarti/domain/repositories/aarti_repository.dart';
+
+class RecentlyPlayedAartiUsecase {
+  final AartiRepository _aartiRepository;
+
+  RecentlyPlayedAartiUsecase({required AartiRepository aartiRepository})
+    : _aartiRepository = aartiRepository;
+  Future<List<AartiEntity>> call() async {
+    final List<AartiEntity> recentlyPlayedAartis = await _aartiRepository
+        .getRecentlyPlayedAartis();
+    return recentlyPlayedAartis;
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\domain\usecases\trending_aarti_usecase.dart ---  
+import 'package:bhakti_vibe/features/aarti/domain/entities/aarti_entity.dart';
+import 'package:bhakti_vibe/features/aarti/domain/repositories/aarti_repository.dart';
+
+class TrendingAartiUsecase {
+  final AartiRepository _aartiRepository;
+
+  TrendingAartiUsecase({required AartiRepository aartiRepository})
+    : _aartiRepository = aartiRepository;
+  Future<List<AartiEntity>> call() async {
+    final List<AartiEntity> trendingAartis = await _aartiRepository
+        .getTrendingAartis();
+    return trendingAartis;
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\presentation\args\aarti_list_by_festival_args.dart ---  
+class AartiListByFestArgs {
+  final String festivalCategoryId;
+
+  AartiListByFestArgs({required this.festivalCategoryId});
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\presentation\args\aarti_player_args.dart ---  
+import 'package:bhakti_vibe/features/aarti/domain/entities/aarti_entity.dart';
+
+class AartiPlayerArgs {
+  final String aartiTitle;
+  final String mainImage;
+  final String aartiAudio;
+  final List<AartiEntity> aartiList;
+  final int currentIndex; // We need this to know where we are in the list for next/prev
+
+  AartiPlayerArgs({
+    required this.aartiTitle,
+    required this.mainImage,
+    required this.aartiAudio,
+    required this.aartiList,
+    required this.currentIndex,
+  });
+} 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\presentation\bindings\aarti_list_binding.dart ---  
+import 'package:bhakti_vibe/core/network/dio_client.dart';
+import 'package:bhakti_vibe/features/aarti/data/data_sources/remote_data_sources/aarti_remote_data_source.dart';
+import 'package:bhakti_vibe/features/aarti/data/repository_implementation/aarti_repository_impl.dart';
+import 'package:bhakti_vibe/features/aarti/domain/repositories/aarti_repository.dart';
+import 'package:bhakti_vibe/features/aarti/domain/usecases/aarti_list_by_festival_usecase.dart';
+import 'package:bhakti_vibe/features/aarti/presentation/controllers/aarti_list_by_fest_controller.dart';
+import 'package:get/instance_manager.dart';
+
+class AartiListByFestBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<AartiRemoteDataSource>(
+      () => AartiRemoteDataSourceImpl(dioClient: Get.find<DioClient>()),
+    );
+    Get.lazyPut<AartiRepository>(
+      () => AartiRepositoryImpl(
+        aartiRemoteDataSource: Get.find<AartiRemoteDataSource>(),
+      ),
+    );
+
+    Get.lazyPut<AartiListByFestivalUsecase>(
+      () => AartiListByFestivalUsecase(
+        aartiRepository: Get.find<AartiRepository>(),
+      ),
+    );
+
+    Get.lazyPut<AartiListByfestivalController>(
+      () => AartiListByfestivalController(
+        aartiListByFestivalUsecase: Get.find<AartiListByFestivalUsecase>(),
+      ),
+    );
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\presentation\bindings\aarti_main_binding.dart ---  
+import 'package:bhakti_vibe/core/network/dio_client.dart';
+import 'package:bhakti_vibe/features/aarti/data/data_sources/remote_data_sources/aarti_remote_data_source.dart';
+import 'package:bhakti_vibe/features/aarti/data/repository_implementation/aarti_repository_impl.dart';
+import 'package:bhakti_vibe/features/aarti/domain/repositories/aarti_repository.dart';
+import 'package:bhakti_vibe/features/aarti/domain/usecases/aarti_festival_catagories_usecase.dart';
+import 'package:bhakti_vibe/features/aarti/domain/usecases/recently_played_aarti_usecase.dart';
+import 'package:bhakti_vibe/features/aarti/domain/usecases/trending_aarti_usecase.dart';
+import 'package:bhakti_vibe/features/aarti/presentation/controllers/aarti_main_controller.dart';
+import 'package:get/instance_manager.dart';
+
+class AartiMainBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<AartiRemoteDataSource>(
+      () => AartiRemoteDataSourceImpl(dioClient: Get.find<DioClient>()),
+    );
+    Get.lazyPut<AartiRepository>(
+      () => AartiRepositoryImpl(
+        aartiRemoteDataSource: Get.find<AartiRemoteDataSource>(),
+      ),
+    );
+    Get.lazyPut<AartiFestivalCatagoriesUsecase>(
+      () => AartiFestivalCatagoriesUsecase(
+        aartiRepo: Get.find<AartiRepository>(),
+      ),
+    );
+
+    Get.lazyPut<TrendingAartiUsecase>(
+      () => TrendingAartiUsecase(aartiRepository: Get.find<AartiRepository>()),
+    );
+    Get.lazyPut<RecentlyPlayedAartiUsecase>(
+      () => RecentlyPlayedAartiUsecase(
+        aartiRepository: Get.find<AartiRepository>(),
+      ),
+    );
+    Get.lazyPut<AartiMainController>(
+      () => AartiMainController(
+        aartiFestivalCatagoriesUsecase:
+            Get.find<AartiFestivalCatagoriesUsecase>(),
+        trendingAartiUsecase: Get.find<TrendingAartiUsecase>(),
+        recentlyPlayedAartiUsecase: Get.find<RecentlyPlayedAartiUsecase>(),
+      ),
+    );
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\presentation\bindings\aarti_player_binding.dart ---  
+import 'package:bhakti_vibe/core/network/dio_client.dart';
+import 'package:bhakti_vibe/features/aarti/data/data_sources/remote_data_sources/aarti_remote_data_source.dart';
+import 'package:bhakti_vibe/features/aarti/data/repository_implementation/aarti_repository_impl.dart';
+import 'package:bhakti_vibe/features/aarti/domain/repositories/aarti_repository.dart';
+import 'package:bhakti_vibe/features/aarti/domain/usecases/get_single_aarti_usecase.dart';
+import 'package:bhakti_vibe/features/aarti/presentation/controllers/aarti_player_controller.dart';
+import 'package:get/instance_manager.dart';
+
+class AartiPlayerBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<AartiRemoteDataSource>(
+      () => AartiRemoteDataSourceImpl(dioClient: Get.find<DioClient>()),
+    );
+    Get.lazyPut<AartiRepository>(
+      () => AartiRepositoryImpl(
+        aartiRemoteDataSource: Get.find<AartiRemoteDataSource>(),
+      ),
+    );
+
+    Get.lazyPut<GetSingleAartiUsecase>(
+      () => GetSingleAartiUsecase(aartiRepository: Get.find<AartiRepository>()),
+    );
+
+    Get.lazyPut<AartiPlayerController>(() => AartiPlayerController());
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\presentation\controllers\aarti_list_by_fest_controller.dart ---  
+import 'package:bhakti_vibe/features/aarti/domain/entities/aarti_entity.dart';
+import 'package:bhakti_vibe/features/aarti/domain/usecases/aarti_list_by_festival_usecase.dart';
+import 'package:bhakti_vibe/features/aarti/presentation/args/aarti_list_by_festival_args.dart';
+import 'package:get/get.dart';
+import 'package:get/state_manager.dart';
+
+class AartiListByfestivalController extends GetxController {
+  final AartiListByFestivalUsecase _aartiListByFestivalUsecase;
+
+  AartiListByfestivalController({
+    required AartiListByFestivalUsecase aartiListByFestivalUsecase,
+  }) : _aartiListByFestivalUsecase = aartiListByFestivalUsecase;
+
+  RxBool isLoading = false.obs;
+  RxString errorMessage = ''.obs;
+  RxList<AartiEntity> aartisByFestival = <AartiEntity>[].obs;
+  String festivalCategoryId = '';
+
+  @override
+  void onInit() {
+    super.onInit();
+    final args = Get.arguments as AartiListByFestArgs;
+    festivalCategoryId = args.festivalCategoryId;
+    getAartiListByFestival(festivalId: festivalCategoryId);
+  }
+
+  Future<void> getAartiListByFestival({required String festivalId}) async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+      final List<AartiEntity>? aartiListByFestival =
+          await _aartiListByFestivalUsecase(festivalId: festivalId);
+      if (aartiListByFestival != null) {
+        aartisByFestival.assignAll(aartiListByFestival);
+      }
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\presentation\controllers\aarti_main_controller.dart ---  
+import 'package:bhakti_vibe/features/aarti/domain/entities/aarti_entity.dart';
+import 'package:bhakti_vibe/features/aarti/domain/entities/festival_category_entity.dart';
+import 'package:bhakti_vibe/features/aarti/domain/usecases/aarti_festival_catagories_usecase.dart';
+import 'package:bhakti_vibe/features/aarti/domain/usecases/recently_played_aarti_usecase.dart';
+import 'package:bhakti_vibe/features/aarti/domain/usecases/trending_aarti_usecase.dart';
+import 'package:get/get.dart';
+
+class AartiMainController extends GetxController {
+  final AartiFestivalCatagoriesUsecase _aartiFestivalCatagoriesUsecase;
+  final TrendingAartiUsecase _trendingAartiUsecase;
+  final RecentlyPlayedAartiUsecase _recentlyPlayedAartiUsecase;
+
+  AartiMainController({
+    required AartiFestivalCatagoriesUsecase aartiFestivalCatagoriesUsecase,
+    required TrendingAartiUsecase trendingAartiUsecase,
+    required RecentlyPlayedAartiUsecase recentlyPlayedAartiUsecase,
+  }) : _aartiFestivalCatagoriesUsecase = aartiFestivalCatagoriesUsecase,
+       _trendingAartiUsecase = trendingAartiUsecase,
+       _recentlyPlayedAartiUsecase = recentlyPlayedAartiUsecase;
+
+  RxBool isLoading = false.obs;
+  RxString errorMessage = ''.obs;
+  RxList<FestivalCategoryEntity> festivalCategories =
+      <FestivalCategoryEntity>[].obs;
+
+  RxList<AartiEntity> trendingAartis = <AartiEntity>[].obs;
+
+  RxList<AartiEntity> recentlyPlayedAartis = <AartiEntity>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    getRecentlyPlayedAartis();
+    getTrendingAartis();
+    getFestivlCategories();
+  }
+
+  Future<void> getFestivlCategories() async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      final List<FestivalCategoryEntity> festivalCategoryList =
+          await _aartiFestivalCatagoriesUsecase();
+      festivalCategories.assignAll(festivalCategoryList);
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> getTrendingAartis() async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      final List<AartiEntity> trendingAartiList = await _trendingAartiUsecase();
+      trendingAartis.assignAll(trendingAartiList);
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> getRecentlyPlayedAartis() async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      final List<AartiEntity> recentlyPlayedAartiList =
+          await _recentlyPlayedAartiUsecase();
+      recentlyPlayedAartis.assignAll(recentlyPlayedAartiList);
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\presentation\controllers\aarti_player_controller.dart ---  
+import 'package:bhakti_vibe/features/aarti/domain/entities/aarti_entity.dart';
+import 'package:bhakti_vibe/features/aarti/presentation/args/aarti_player_args.dart';
+import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
+import 'package:just_audio/just_audio.dart'; 
+// import 'path_to/aarti_player_args.dart'; 
+
+class AartiPlayerController extends GetxController {
+  
+
+  AartiPlayerController();
+      
+
+  // UI State
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
+
+  // Audio Player State
+  final AudioPlayer audioPlayer = AudioPlayer(); 
+  
+  // Track metadata
+  final RxString currentTitle = ''.obs;
+  final RxString currentImage = ''.obs;
+  
+  // Progress bar states
+  final Rx<Duration> progress = Duration.zero.obs;
+  final Rx<Duration> totalDuration = Duration.zero.obs;
+  final RxBool isPlaying = false.obs;
+
+  // Playlist management
+  List<AartiEntity> playlist = [];
+  int currentIndex = 0;
+
+  @override
+  void onInit() {
+    super.onInit();
+    debugPrint('AartiPlayerController: onInit called');
+    
+    // Extract args from navigation
+    if (Get.arguments is AartiPlayerArgs) {
+      final args = Get.arguments as AartiPlayerArgs;
+      playlist = args.aartiList;
+      currentIndex = args.currentIndex;
+      
+      debugPrint('AartiPlayerController: Received args. Title: ${args.aartiTitle}, Index: $currentIndex');
+      
+      currentTitle.value = args.aartiTitle;
+      currentImage.value = args.mainImage;
+      
+      _loadAudio(args.aartiAudio);
+    } else {
+      debugPrint('AartiPlayerController: No valid arguments received');
+    }
+
+    _setupAudioListeners();
+  }
+
+  // --- Core Audio Logic ---
+
+  Future<void> _loadAudio(String url) async {
+    debugPrint('AartiPlayerController: Attempting to load audio URL: $url');
+    try {
+      await audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(url)));
+      debugPrint('AartiPlayerController: Audio source set successfully, starting playback');
+      audioPlayer.play(); 
+    } catch (e) {
+      debugPrint('AartiPlayerController: Error loading audio -> $e');
+      errorMessage.value = "Error loading audio: $e";
+    }
+  }
+
+  void _setupAudioListeners() {
+    debugPrint('AartiPlayerController: Setting up audio stream listeners');
+    
+    audioPlayer.positionStream.listen((position) {
+      progress.value = position;
+    });
+
+    audioPlayer.durationStream.listen((duration) {
+      totalDuration.value = duration ?? Duration.zero;
+    });
+
+    audioPlayer.playerStateStream.listen((state) {
+      isPlaying.value = state.playing;
+      
+      // Auto-play next track on completion
+      if (state.processingState == ProcessingState.completed) {
+        debugPrint('AartiPlayerController: Track completed automatically');
+        playNext();
+      }
+    });
+  }
+
+  // --- Player Controls ---
+
+  void togglePlayPause() {
+    debugPrint('AartiPlayerController: togglePlayPause triggered. Currently playing: ${audioPlayer.playing}');
+    if (audioPlayer.playing) {
+      audioPlayer.pause();
+    } else {
+      audioPlayer.play();
+    }
+  }
+
+  void seek(Duration position) {
+    debugPrint('AartiPlayerController: Seeking to position: $position');
+    audioPlayer.seek(position); 
+  }
+
+  void playNext() {
+    debugPrint('AartiPlayerController: playNext triggered');
+    if (currentIndex < playlist.length - 1) {
+      currentIndex++;
+      debugPrint('AartiPlayerController: Moving to next index: $currentIndex');
+      _updateTrack(playlist[currentIndex]);
+    } else {
+      debugPrint('AartiPlayerController: Reached end of playlist');
+    }
+  }
+
+  void playPrevious() {
+    debugPrint('AartiPlayerController: playPrevious triggered');
+    if (currentIndex > 0) {
+      currentIndex--;
+      debugPrint('AartiPlayerController: Moving to previous index: $currentIndex');
+      _updateTrack(playlist[currentIndex]);
+    } else {
+      debugPrint('AartiPlayerController: Already at the first track');
+    }
+  }
+
+  void _updateTrack(AartiEntity nextAarti) {
+    debugPrint('AartiPlayerController: Updating track UI to: ${nextAarti.title}');
+    currentTitle.value = nextAarti.title;
+    currentImage.value = nextAarti.mainImage; 
+    
+    _loadAudio(nextAarti.audio);
+  }
+
+  @override
+  void onClose() {
+    debugPrint('AartiPlayerController: onClose called, disposing audioPlayer');
+    audioPlayer.dispose(); 
+    super.onClose();
+  }
+} 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\presentation\views\aarti_list_by_fest_view.dart.dart ---  
+import 'package:bhakti_vibe/core/routes/app_routes.dart';
+import 'package:bhakti_vibe/features/aarti/domain/entities/aarti_entity.dart';
+import 'package:bhakti_vibe/features/aarti/presentation/args/aarti_player_args.dart';
+import 'package:bhakti_vibe/features/aarti/presentation/controllers/aarti_list_by_fest_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+class AartiListByFestView extends GetView<AartiListByfestivalController> {
+  const AartiListByFestView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // Matching the warm background color from AartiMainView
+      backgroundColor: const Color(0xFFFCF4EE),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFFA63B3B)),
+          onPressed: () => Get.back(),
+        ),
+        title: const Text(
+          'Aarti',
+          style: TextStyle(
+            color: Color(0xFFA63B3B),
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+      ),
+      body: Obx(() {
+        // Handle Loading State
+        if (controller.isLoading.isTrue) {
+          return const Center(
+            child: CircularProgressIndicator(color: Color(0xFFA63B3B)),
+          );
+        }
+
+        // Handle Error State
+        if (controller.errorMessage.isNotEmpty) {
+          return Center(
+            child: Text(
+              controller.errorMessage.value,
+              style: const TextStyle(color: Colors.red),
+            ),
+          );
+        }
+
+        // Handle Empty State
+        if (controller.aartisByFestival.isEmpty) {
+          return const Center(
+            child: Text(
+              'No Aartis found.',
+              style: TextStyle(color: Colors.black54, fontSize: 16),
+            ),
+          );
+        }
+
+        // Simple uncluttered list
+        return ListView.separated(
+          
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+          itemCount: controller.aartisByFestival.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 16),
+          itemBuilder: (context, index) {
+            final AartiEntity aarti = controller.aartisByFestival[index];
+            
+            return GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                // Navigate to Player and pass the custom arguments class
+                Get.toNamed(
+                  AppRoutes.aartiPlayer,
+                  arguments: AartiPlayerArgs(
+                    aartiTitle: aarti.title,
+                    mainImage: aarti.mainImage,
+                    aartiAudio: aarti.audio,
+                    aartiList: controller.aartisByFestival, 
+                    currentIndex: index, 
+                  ),
+                );
+              },
+              child: Row(
+                children: [
+                  // Leading Square Image
+                  Container(
+                    height: 60,
+                    width: 60,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      image: DecorationImage(
+                        image: NetworkImage(aarti.mainImage),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  
+                  // Aarti Title (and optional subtitle if your entity supports it)
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          aarti.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        // Assuming the subtitle from Figma might not be strictly 
+                        // available in the entity. If you have a hindi title field, 
+                        // you can place it here.
+                        const SizedBox(height: 4),
+                        const Text(
+                          'Aarti', // Simple placeholder to match the 2-line layout
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                ],
+              ),
+            );
+          },
+        );
+      }),
+    );
+  }
+} 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\presentation\views\aarti_main_view.dart ---  
+import 'package:bhakti_vibe/core/routes/app_routes.dart';
+import 'package:bhakti_vibe/features/aarti/presentation/args/aarti_list_by_festival_args.dart';
+import 'package:bhakti_vibe/features/aarti/presentation/args/aarti_player_args.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:bhakti_vibe/features/aarti/domain/entities/aarti_entity.dart';
+import 'package:bhakti_vibe/features/aarti/domain/entities/festival_category_entity.dart';
+import 'package:bhakti_vibe/features/aarti/presentation/controllers/aarti_main_controller.dart';
+
+class AartiMainView extends GetView<AartiMainController> {
+  const AartiMainView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      if (controller.isLoading.isTrue) {
+        return const Center(
+          child: CircularProgressIndicator(color: Color(0xFFA63B3B)),
+        );
+      }
+
+      if (controller.errorMessage.isNotEmpty) {
+        return Center(
+          child: Text(
+            controller.errorMessage.value,
+            style: const TextStyle(color: Colors.red),
+          ),
+        );
+      }
+
+      // Fixed height view: components will dynamically scale via Expanded
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (controller.recentlyPlayedAartis.isNotEmpty) ...[
+            _buildSectionTitle('Recently Played'),
+            Expanded(child: _buildRecentlyPlayedList()),
+            const SizedBox(height: 12),
+          ],
+
+          if (controller.trendingAartis.isNotEmpty) ...[
+            _buildSectionTitle("Trending Aarti's"),
+            Expanded(child: _buildTrendingList()),
+            const SizedBox(height: 12),
+          ],
+
+          if (controller.festivalCategories.isNotEmpty) ...[
+            _buildSectionTitle('Festivals'),
+            Expanded(child: _buildFestivalList()),
+            const SizedBox(height: 16),
+          ],
+        ],
+      );
+    });
+  }
+
+  // --- UI Components ---
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: Colors.black87,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecentlyPlayedList() {
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      itemCount: controller.recentlyPlayedAartis.length,
+      itemBuilder: (context, index) {
+        final AartiEntity aarti = controller.recentlyPlayedAartis[index];
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: GestureDetector(
+            onTap: () {
+              Get.toNamed(
+                AppRoutes.aartiPlayer,
+                arguments: AartiPlayerArgs(
+                  aartiTitle: aarti.title,
+                  mainImage: aarti.mainImage,
+                  aartiAudio: aarti.audio,
+                  aartiList: controller.recentlyPlayedAartis,
+                  currentIndex: index,
+                ),
+              );
+            },
+            child: Column(
+              children: [
+                // Expanded replaces hardcoded height, AspectRatio dictates width dynamically
+                Expanded(
+                  child: AspectRatio(
+                    aspectRatio: 0.85, // Tombstone shape ratio
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(60),
+                          bottom: Radius.circular(16),
+                        ),
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/god_cat_bg.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(60),
+                          bottom: Radius.circular(16),
+                        ),
+                        child: Image.network(
+                          aarti.withoutBgImage,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                SizedBox(
+                  width: 90, // Limit text width to prevent stretching
+                  child: Text(
+                    aarti.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFFA63B3B),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTrendingList() {
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      itemCount: controller.trendingAartis.length,
+      itemBuilder: (context, index) {
+        final AartiEntity aarti = controller.trendingAartis[index];
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: GestureDetector(
+            onTap: () {
+              Get.toNamed(
+                AppRoutes.aartiPlayer,
+                arguments: AartiPlayerArgs(
+                  aartiTitle: aarti.title,
+                  mainImage: aarti.mainImage,
+                  aartiAudio: aarti.audio,
+                  aartiList: controller.recentlyPlayedAartis, 
+                  currentIndex: index,
+                ),
+              );
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: AspectRatio(
+                    aspectRatio: 1.0, // Square shape from Figma
+                    child: Container(
+                      alignment: Alignment.bottomLeft,
+                      padding: const EdgeInsets.only(left: 8, bottom: 8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        image: DecorationImage(
+                          image: NetworkImage(aarti.bgImage),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        child: const Icon(
+                          Icons.play_arrow,
+                          color: Color(0xFFA63B3B),
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                SizedBox(
+                  width: 90,
+                  child: Text(
+                    aarti.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFFA63B3B),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildFestivalList() {
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      itemCount: controller.festivalCategories.length,
+      itemBuilder: (context, index) {
+        final FestivalCategoryEntity festivalCategory =
+            controller.festivalCategories[index];
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: GestureDetector(
+            onTap: () {
+              Get.toNamed(
+                AppRoutes.aartiListByFest,
+                arguments: AartiListByFestArgs(
+                  festivalCategoryId: festivalCategory.id,
+                ),
+              );
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: AspectRatio(
+                    aspectRatio: 0.75, // Tall rectangle shape from Figma
+                    child: Container(
+                      alignment: Alignment.bottomLeft,
+                      padding: const EdgeInsets.only(left: 8, bottom: 8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        image: DecorationImage(
+                          image: NetworkImage(festivalCategory.catImage),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        child: const Icon(
+                          Icons.play_arrow,
+                          color: Color(0xFFA63B3B),
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                SizedBox(
+                  width: 90,
+                  child: Text(
+                    festivalCategory.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFFA63B3B),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+} 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\aarti\presentation\views\aarti_player_view.dart ---  
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:bhakti_vibe/features/aarti/presentation/controllers/aarti_player_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+class AartiPlayerView extends GetView<AartiPlayerController> {
+  const AartiPlayerView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    debugPrint('AartiPlayerView: build() called');
+
+    return Scaffold(
+      // Default background color to show before the image fully loads
+      backgroundColor: Colors.black,
+      
+      // Top-level Obx handles background image changes when switching tracks
+      body: Obx(() {
+        // Guard against empty URLs to prevent NetworkImage from throwing an exception
+        final imageUrl = controller.currentImage.value;
+        debugPrint('AartiPlayerView: Current background image URL updated -> $imageUrl');
+
+        return Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            image: imageUrl.isNotEmpty
+                ? DecorationImage(
+                    image: NetworkImage(imageUrl),
+                    fit: BoxFit.cover,
+                    // Adding a dark overlay so the white text and controls pop out
+                    colorFilter: ColorFilter.mode(
+                      Colors.black.withOpacity(0.4),
+                      BlendMode.darken,
+                    ),
+                  )
+                : null,
+          ),
+          child: SafeArea(
+            child: Column(
+              children: [
+                _buildHeader(),
+                // Pushes the player controls to the absolute bottom of the screen
+                const Spacer(),
+                _buildPlayerControls(),
+              ],
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+            onPressed: () {
+              debugPrint('AartiPlayerView: Back button pressed');
+              Get.back();
+            },
+          ),
+          Expanded(
+            // Localized Obx so only the text rebuilds when the title changes, avoiding full UI redraws
+            child: Obx(() => Text(
+              controller.currentTitle.value,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            )),
+          ),
+          // Dummy spacer to balance out the back button and keep the title perfectly centered
+          const SizedBox(width: 48), 
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlayerControls() {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // --- Progress Bar ---
+          // Wrapping only the progress bar in Obx to handle rapid tick updates efficiently
+          Obx(() => ProgressBar(
+            progress: controller.progress.value,
+            total: controller.totalDuration.value,
+            onSeek: (duration) {
+              debugPrint('AartiPlayerView: User seeking to $duration');
+              controller.seek(duration);
+            },
+            progressBarColor: const Color(0xFFF7931E),
+            baseBarColor: Colors.white.withOpacity(0.2),
+            thumbColor: const Color(0xFFF7931E),
+            timeLabelTextStyle: const TextStyle(color: Colors.white),
+          )),
+          const SizedBox(height: 24),
+          
+          // --- Media Controls ---
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.skip_previous, color: Colors.white, size: 36),
+                onPressed: () {
+                  debugPrint('AartiPlayerView: Previous track pressed');
+                  controller.playPrevious();
+                },
+              ),
+              
+              // Main Play/Pause Button
+              GestureDetector(
+                onTap: () {
+                  debugPrint('AartiPlayerView: Play/Pause toggled');
+                  controller.togglePlayPause();
+                },
+                child: Container(
+                  height: 70,
+                  width: 70,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF7931E),
+                    shape: BoxShape.circle,
+                  ),
+                  // Localized Obx to just swap the icon state without rebuilding the whole button
+                  child: Obx(() => Icon(
+                    controller.isPlaying.value ? Icons.pause : Icons.play_arrow,
+                    color: Colors.white,
+                    size: 40,
+                  )),
+                ),
+              ),
+              
+              IconButton(
+                icon: const Icon(Icons.skip_next, color: Colors.white, size: 36),
+                onPressed: () {
+                  debugPrint('AartiPlayerView: Next track pressed');
+                  controller.playNext();
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+} 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\root_dashboard\presentation\bindings\root_binding.dart ---  
+import 'package:bhakti_vibe/features/root_dashboard/presentation/controllers/root_view_controller.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/get_instance.dart';
+
+class RootBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<RootController>(() => RootController());
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\root_dashboard\presentation\controllers\root_view_controller.dart ---  
+import 'package:get/get.dart';
+
+class RootController extends GetxController {
+  // 0 for Aarti, 1 for Wallpaper
+  final RxInt currentIndex = 0.obs;
+
+  void changeTab(int index) {
+    currentIndex.value = index;
+  }
+} 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\root_dashboard\presentation\views\root_view.dart ---  
+import 'package:bhakti_vibe/core/constants/app_assets/app_image_assets.dart';
+import 'package:bhakti_vibe/features/root_dashboard/presentation/controllers/root_view_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+// Importing  feature views
+import 'package:bhakti_vibe/features/aarti/presentation/views/aarti_main_view.dart';
+import 'package:bhakti_vibe/features/wallpaper/presentation/views/wallpaper_main_view.dart';
+// Make sure to import your AppImageAssets if it's not already globally available
+// import 'package:bhakti_vibe/core/constants/app_assets/app_image_assets.dart';
+
+class RootView extends GetView<RootController> {
+  const RootView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      final isAarti = controller.currentIndex.value == 0;
+
+      return Scaffold(
+        backgroundColor: const Color(0xFFFCF4EE),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios_new,
+              color: Color(0xFFA63B3B),
+            ),
+            onPressed: () {
+              // Handle back navigation or exit app
+            },
+          ),
+          title: Text(
+            isAarti ? 'Aarti' : 'Wallpaper',
+            style: const TextStyle(
+              color: Color(0xFFA63B3B),
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+        ),
+        // Simple conditional rendering (No IndexedStack)
+        body: isAarti ? const AartiMainView() : const WallpaperMainView(),
+
+        // I built a custom floating pill container here. Standard BottomNavBars 
+        // make it really hard to get that exact orange border and inner pill shape.
+        bottomNavigationBar: SafeArea(
+          child: Container(
+            margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(40),
+              // Matching the thin orange border from the design
+              border: Border.all(color: const Color(0xFFFF9933), width: 1), 
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // --- Aarti Tab ---
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => controller.changeTab(0),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: controller.currentIndex.value == 0 
+                            ? const Color(0xFFFF9933) 
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            controller.currentIndex.value == 0 
+                                ? AppImageAssets.preayWhite 
+                                : AppImageAssets.prayBlack,
+                            height: 20,
+                            // Coloring the icon to grey when inactive just to be safe
+                            color: controller.currentIndex.value == 0 ? Colors.white : Colors.grey,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Aarti',
+                            style: TextStyle(
+                              color: controller.currentIndex.value == 0 ? Colors.white : Colors.grey,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                
+                // --- Wallpaper Tab ---
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => controller.changeTab(1),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: controller.currentIndex.value == 1 
+                            ? const Color(0xFFFF9933) 
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            controller.currentIndex.value == 1 
+                                ? AppImageAssets.wallpIconWhite 
+                                : AppImageAssets.wallpIconBlack,
+                            height: 20,
+                            color: controller.currentIndex.value == 1 ? Colors.white : Colors.grey,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Wallpaper',
+                            style: TextStyle(
+                              color: controller.currentIndex.value == 1 ? Colors.white : Colors.grey,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+               
+              ],
+            ),
+          ),
+        ),
+      );
+    });
+  }
+} 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\splash\presentation\bindings\splash_binding.dart ---  
+import 'package:bhakti_vibe/features/splash/presentation/controllers/splash_controller.dart';
+import 'package:get/instance_manager.dart';
+
+class SplashBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.put<SplashController>(SplashController());
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\splash\presentation\controllers\splash_controller.dart ---  
+import 'dart:async';
+
+import 'package:bhakti_vibe/core/routes/app_routes.dart';
+import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
+
+class SplashController extends GetxController {
+  @override
+  void onInit() {
+    super.onInit();
+    debugPrint('1. Splash Controller Initialized');
+    _startSplashTimer();
+  }
+
+  void _startSplashTimer() {
+    Timer(const Duration(seconds: 3), () {
+      debugPrint('2.splash ctr> Timer finished, attempting navigation');
+      Get.offAllNamed(AppRoutes.rootDashboard);
+    });
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\splash\presentation\views\bhakti_vibe_splash_view.dart ---  
+import 'package:bhakti_vibe/core/constants/app_assets/app_image_assets.dart';
+import 'package:bhakti_vibe/features/splash/presentation/controllers/splash_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+class SplashView extends GetView<SplashController> {
+  const SplashView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Image.asset(
+        AppImageAssets.splashImage,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+      ),
+    );
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\data\data_models\wallpaper_god_category_model.dart ---  
+import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_gof_category_entity.dart';
+
+class WallpaperGodCategoryModel extends WallpaperGodCategoryEntity {
+  WallpaperGodCategoryModel({
+    required super.id,
+    required super.catName,
+    required super.catImage,
+  });
+  factory WallpaperGodCategoryModel.fromJson({
+    required Map<String, dynamic> json,
+  }) {
+    return WallpaperGodCategoryModel(
+      id: json['id'],
+      catName: json['cat_name'] ?? 'untitled',
+      catImage: json['cat_image'] ?? '',
+    );
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\data\data_models\wallpaper_model.dart ---  
+import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_entity.dart';
+
+class WallpaperModel extends WallpaperEntity {
+  WallpaperModel({required super.id, required super.images});
+
+  factory WallpaperModel.fromGodCategoryJson({required Map<String, dynamic> json}) {
+    return WallpaperModel(id: json['id'], images: json['images'] ?? '');
+  }
+
+  factory WallpaperModel.fromTrendingJson({required Map<String, dynamic> json}) {
+    return WallpaperModel(id: json['id'], images: json['post_image'] ?? '');
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\data\data_sources\wallpaper_remote_data_sources\wallpaper_remote_data_source.dart ---  
+import 'package:bhakti_vibe/core/network/api_endpoints.dart';
+import 'package:bhakti_vibe/core/network/dio_client.dart';
+import 'package:bhakti_vibe/features/wallpaper/data/data_models/wallpaper_god_category_model.dart';
+import 'package:bhakti_vibe/features/wallpaper/data/data_models/wallpaper_model.dart';
+
+abstract class WallpaperRemoteDataSource {
+  Future<List<WallpaperGodCategoryModel>> getWallpaperGodCategoryModels();
+  Future<List<WallpaperModel>?> getWallpaperModelsByGodCategory({
+    required String godCategoryId,
+  });
+  Future<List<WallpaperModel>> getRecentlyUsedWallpapers();
+  Future<List<WallpaperModel>> getTrendingWallpapers();
+}
+
+class WallpaperRemoteDataSourceImpl implements WallpaperRemoteDataSource {
+  final DioClient _dioClient;
+
+  WallpaperRemoteDataSourceImpl({required DioClient dioClient})
+    : _dioClient = dioClient;
+  @override
+  Future<List<WallpaperGodCategoryModel>>
+  getWallpaperGodCategoryModels() async {
+    try {
+      final responseData = await _dioClient.get(
+        endpoint: ApiEndpoints.wallpaperCategories,
+      );
+
+      final List<dynamic> jsonList = responseData['data'] as List<dynamic>;
+      final List<WallpaperGodCategoryModel> wallpaperGodCategoryModels =
+          jsonList.map((json) {
+            return WallpaperGodCategoryModel.fromJson(json: json);
+          }).toList();
+
+      return wallpaperGodCategoryModels;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<WallpaperModel>?> getWallpaperModelsByGodCategory({
+    required String godCategoryId,
+  }) async {
+    try {
+      final response = await _dioClient.get(
+        endpoint: ApiEndpoints.wallpaperPosts,
+        queryParameters: {'category_id': godCategoryId},
+      );
+      if (response is List && response[0] is String) {
+        return null;
+      }
+
+      final List<dynamic> jsonList = response as List<dynamic>;
+      final List<WallpaperModel> wallpaperPostsByGodCategory = jsonList
+          .map((json) => WallpaperModel.fromGodCategoryJson(json: json))
+          .toList();
+      return wallpaperPostsByGodCategory;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<WallpaperModel>> getRecentlyUsedWallpapers() async {
+    try {
+      final response = await _dioClient.get(
+        endpoint: ApiEndpoints.recentlyUsedWallpaper,
+      );
+      final List<dynamic> jsonList = response as List<dynamic>;
+      final List<WallpaperModel> recentlyUsedWallpapers = jsonList
+          .map((json) => WallpaperModel.fromTrendingJson(json: json))
+          .toList();
+
+      return recentlyUsedWallpapers;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<WallpaperModel>> getTrendingWallpapers() async {
+    try {
+      final response = await _dioClient.get(
+        endpoint: ApiEndpoints.trendingWallpapers,
+      );
+      final List<dynamic> jsonList = response as List<dynamic>;
+      final List<WallpaperModel> trendingWallpapers = jsonList
+          .map((json) => WallpaperModel.fromTrendingJson(json: json))
+          .toList();
+
+      return trendingWallpapers;
+    } catch (e) {
+      rethrow;
+    }
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\data\repository_implementation\wallpaper_repo_impl.dart ---  
+import 'package:bhakti_vibe/features/wallpaper/data/data_sources/wallpaper_remote_data_sources/wallpaper_remote_data_source.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_entity.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_gof_category_entity.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/repositories/wallpaper_repository.dart';
+
+class WallpaperRepoImpl implements WallpaperRepository {
+  final WallpaperRemoteDataSource _wallpaperRemoteDataSource;
+
+  WallpaperRepoImpl({
+    required WallpaperRemoteDataSource wallpaperRemoteDataSource,
+  }) : _wallpaperRemoteDataSource = wallpaperRemoteDataSource;
+  @override
+  Future<List<WallpaperGodCategoryEntity>> getWallpaperGodCategories() async {
+    final List<WallpaperGodCategoryEntity> wallpaperGodCategories =
+        await _wallpaperRemoteDataSource.getWallpaperGodCategoryModels();
+    return wallpaperGodCategories;
+  }
+
+  @override
+  Future<List<WallpaperEntity>?> getWallpaperPostsByGodCategory({
+    required String godCategoryId,
+  }) async {
+    final List<WallpaperEntity>? wallpaperPostsByGodCategory =
+        await _wallpaperRemoteDataSource.getWallpaperModelsByGodCategory(
+          godCategoryId: godCategoryId,
+        );
+    return wallpaperPostsByGodCategory;
+  }
+
+  @override
+  Future<List<WallpaperEntity>> getRecentlyUsedWallpapers() async {
+    final List<WallpaperEntity> recentWallpapers =
+        await _wallpaperRemoteDataSource.getRecentlyUsedWallpapers();
+    return recentWallpapers;
+  }
+
+  @override
+  Future<List<WallpaperEntity>> getTrendingWallpapers() async {
+    final List<WallpaperEntity> trendingWallpapers =
+        await _wallpaperRemoteDataSource.getTrendingWallpapers();
+    return trendingWallpapers;
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\domain\entities\wallpaper_entity.dart ---  
+class WallpaperEntity {
+  final String id;
+  final String images;
+
+  WallpaperEntity({required this.id, required this.images});
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\domain\entities\wallpaper_gof_category_entity.dart ---  
+class WallpaperGodCategoryEntity {
+  final String id;
+  final String catName;
+  final String catImage;
+
+  WallpaperGodCategoryEntity({
+    required this.id,
+    required this.catName,
+    required this.catImage,
+  });
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\domain\repositories\wallpaper_repository.dart ---  
+import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_entity.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_gof_category_entity.dart';
+
+abstract class WallpaperRepository {
+  Future<List<WallpaperGodCategoryEntity>> getWallpaperGodCategories();
+  Future<List<WallpaperEntity>?> getWallpaperPostsByGodCategory({
+    required String godCategoryId,
+  });
+
+  Future<List<WallpaperEntity>> getRecentlyUsedWallpapers();
+  Future<List<WallpaperEntity>> getTrendingWallpapers();
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\domain\usecases\recently_used_wallpaper_usecase.dart ---  
+import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_entity.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/repositories/wallpaper_repository.dart';
+
+class RecentlyUsedWallpaperUsecase {
+  final WallpaperRepository _wallpaperRepository;
+
+  RecentlyUsedWallpaperUsecase({
+    required WallpaperRepository wallpaperRepository,
+  }) : _wallpaperRepository = wallpaperRepository;
+
+  Future<List<WallpaperEntity>> call() {
+    return _wallpaperRepository.getRecentlyUsedWallpapers();
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\domain\usecases\trending_wallpapers_usecase.dart ---  
+import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_entity.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/repositories/wallpaper_repository.dart';
+
+class TrendingWallpapersUsecase {
+  final WallpaperRepository _wallpaperRepository;
+
+  TrendingWallpapersUsecase({required WallpaperRepository wallpaperRepository})
+    : _wallpaperRepository = wallpaperRepository;
+
+  Future<List<WallpaperEntity>> call() {
+    return _wallpaperRepository.getTrendingWallpapers();
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\domain\usecases\wallpaper_god_categories_usecase.dart ---  
+import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_gof_category_entity.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/repositories/wallpaper_repository.dart';
+
+class WallpaperGodCategoriesUsecase {
+  final WallpaperRepository _wallpaperRepository;
+
+  WallpaperGodCategoriesUsecase({
+    required WallpaperRepository wallpaperRepository,
+  }) : _wallpaperRepository = wallpaperRepository;
+  Future<List<WallpaperGodCategoryEntity>> call() async {
+    final List<WallpaperGodCategoryEntity> wallpGodCatagories =
+        await _wallpaperRepository.getWallpaperGodCategories();
+    return wallpGodCatagories;
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\domain\usecases\wallpaper_posts_by_god_category_usecase.dart ---  
+import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_entity.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/repositories/wallpaper_repository.dart';
+
+class WallpapersByCategoryUsecase {
+  final WallpaperRepository _wallpaperRepository;
+
+  WallpapersByCategoryUsecase({
+    required WallpaperRepository wallpaperRepository,
+  }) : _wallpaperRepository = wallpaperRepository;
+
+  Future<List<WallpaperEntity>?> call({required String godCategoryId}) async {
+    final List<WallpaperEntity>? wallpaperPostsByGodCategory =
+        await _wallpaperRepository.getWallpaperPostsByGodCategory(
+          godCategoryId: godCategoryId,
+        );
+    return wallpaperPostsByGodCategory;
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\presentation\args\wallpaperPostsByGodCategoryArgs.dart ---  
+class WallpapersByCategoryArgs {
+  final String id;
+  final String categoryName;
+
+  WallpapersByCategoryArgs({required this.id, required this.categoryName});
+} 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\presentation\args\wallpaper_full_screen_args.dart ---  
+import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_entity.dart';
+
+class WallpaperFullScreenArgs {
+  final String? categoryTitle;
+  final WallpaperEntity currentWallpaper;
+  final int currentIndex;
+  final List<WallpaperEntity> wallpapers;
+
+  WallpaperFullScreenArgs({
+    this.categoryTitle,
+    required this.currentWallpaper,
+    required this.currentIndex,
+    required this.wallpapers,
+  });
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\presentation\bindings\wallpapers_by_category_binding.dart ---  
+import 'package:bhakti_vibe/core/network/dio_client.dart';
+import 'package:bhakti_vibe/features/wallpaper/data/data_sources/wallpaper_remote_data_sources/wallpaper_remote_data_source.dart';
+import 'package:bhakti_vibe/features/wallpaper/data/repository_implementation/wallpaper_repo_impl.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/repositories/wallpaper_repository.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/usecases/wallpaper_posts_by_god_category_usecase.dart';
+import 'package:bhakti_vibe/features/wallpaper/presentation/args/wallpaperPostsByGodCategoryArgs.dart';
+import 'package:bhakti_vibe/features/wallpaper/presentation/controllers/wallpaper_posts_by_god_category_controller.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/bindings_interface.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
+
+class WallpapersByCategoryBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<WallpaperRemoteDataSource>(
+      () => WallpaperRemoteDataSourceImpl(dioClient: Get.find<DioClient>()),
+    );
+    Get.lazyPut<WallpaperRepository>(
+      () => WallpaperRepoImpl(
+        wallpaperRemoteDataSource: Get.find<WallpaperRemoteDataSource>(),
+      ),
+    );
+
+    Get.lazyPut<WallpapersByCategoryUsecase>(
+      () => WallpapersByCategoryUsecase(
+        wallpaperRepository: Get.find<WallpaperRepository>(),
+      ),
+    );
+
+    Get.lazyPut<WallpapersByCategoryController>(
+      () => WallpapersByCategoryController(
+        wallpaperPostsByGodCategoryUsecase:
+            Get.find<WallpapersByCategoryUsecase>(),
+      ),
+    );
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\presentation\bindings\wallpaper_full_screen_binding.dart ---  
+import 'package:bhakti_vibe/features/wallpaper/presentation/controllers/wallpaper_full_screen_controller.dart';
+import 'package:get/instance_manager.dart';
+
+class WallpaperFullScreenBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<WallpaperFullScreenController>(
+      () => WallpaperFullScreenController(),
+    );
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\presentation\bindings\wallpaper_main_binding.dart ---  
+import 'package:bhakti_vibe/core/network/dio_client.dart';
+import 'package:bhakti_vibe/features/wallpaper/data/data_sources/wallpaper_remote_data_sources/wallpaper_remote_data_source.dart';
+import 'package:bhakti_vibe/features/wallpaper/data/repository_implementation/wallpaper_repo_impl.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/repositories/wallpaper_repository.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/usecases/recently_used_wallpaper_usecase.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/usecases/trending_wallpapers_usecase.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/usecases/wallpaper_god_categories_usecase.dart';
+import 'package:bhakti_vibe/features/wallpaper/presentation/controllers/wallpaper_main_controller.dart';
+import 'package:get/instance_manager.dart';
+
+class WallpaperMainBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<WallpaperRemoteDataSource>(
+      () => WallpaperRemoteDataSourceImpl(dioClient: Get.find<DioClient>()),
+    );
+    Get.lazyPut<WallpaperRepository>(
+      () => WallpaperRepoImpl(
+        wallpaperRemoteDataSource: Get.find<WallpaperRemoteDataSource>(),
+      ),
+    );
+    Get.lazyPut<WallpaperGodCategoriesUsecase>(
+      () => WallpaperGodCategoriesUsecase(
+        wallpaperRepository: Get.find<WallpaperRepository>(),
+      ),
+    );
+    Get.lazyPut<RecentlyUsedWallpaperUsecase>(
+      () => RecentlyUsedWallpaperUsecase(
+        wallpaperRepository: Get.find<WallpaperRepository>(),
+      ),
+    );
+
+    Get.lazyPut<TrendingWallpapersUsecase>(
+      () => TrendingWallpapersUsecase(
+        wallpaperRepository: Get.find<WallpaperRepository>(),
+      ),
+    );
+
+    Get.lazyPut<WallpaperMainController>(
+      () => WallpaperMainController(
+        wallpaperGodCategoriesUsecase:
+            Get.find<WallpaperGodCategoriesUsecase>(),
+        recentlyUsedWallpaperUsecase: Get.find<RecentlyUsedWallpaperUsecase>(),
+        trendingWallpapersUsecase: Get.find<TrendingWallpapersUsecase>(),
+      ),
+    );
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\presentation\controllers\wallpaper_full_screen_controller.dart ---  
+import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_entity.dart';
+import 'package:bhakti_vibe/features/wallpaper/presentation/args/wallpaper_full_screen_args.dart';
+import 'package:get/get.dart';
+
+class WallpaperFullScreenController extends GetxController {
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
+  final RxList<WallpaperEntity> wallpaperList = <WallpaperEntity>[].obs;
+  final currentWallpaper = Rxn<WallpaperEntity>();
+  int currentIndex = 0;
+
+  @override
+  void onInit() {
+    super.onInit();
+    if (Get.arguments is WallpaperFullScreenArgs) {
+      final WallpaperFullScreenArgs args =
+          Get.arguments as WallpaperFullScreenArgs;
+      wallpaperList.value = args.wallpapers;
+      currentWallpaper.value = wallpaperList[currentIndex];
+      currentIndex = args.currentIndex;
+    }
+  }
+
+  void showNextWallpaper(int currIndex) {
+    if (currIndex < wallpaperList.length - 1) {
+      currentIndex = currIndex;
+      currentWallpaper.value = wallpaperList[currentIndex];
+    }
+  }
+
+  void showPreviousWallpaper(int currIndex) {
+    if (currIndex > 0) {
+      currentIndex = currIndex;
+      currentWallpaper.value = wallpaperList[currentIndex];
+    }
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\presentation\controllers\wallpaper_main_controller.dart ---  
+import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_entity.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_gof_category_entity.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/usecases/recently_used_wallpaper_usecase.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/usecases/trending_wallpapers_usecase.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/usecases/wallpaper_god_categories_usecase.dart';
+import 'package:get/get.dart';
+
+class WallpaperMainController extends GetxController {
+  final WallpaperGodCategoriesUsecase _wallpaperGodCategoriesUsecase;
+  final RecentlyUsedWallpaperUsecase _recentlyUsedWallpaperUsecase;
+  final TrendingWallpapersUsecase _trendingWallpapersUsecase;
+
+  WallpaperMainController({
+    required WallpaperGodCategoriesUsecase wallpaperGodCategoriesUsecase,
+    required RecentlyUsedWallpaperUsecase recentlyUsedWallpaperUsecase,
+    required TrendingWallpapersUsecase trendingWallpapersUsecase,
+  }) : _trendingWallpapersUsecase = trendingWallpapersUsecase,
+       _recentlyUsedWallpaperUsecase = recentlyUsedWallpaperUsecase,
+       _wallpaperGodCategoriesUsecase = wallpaperGodCategoriesUsecase;
+
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
+  final RxList wallpGodCategories = <WallpaperGodCategoryEntity>[].obs;
+  final RxList recentlyUsedWllpapers = <WallpaperEntity>[].obs;
+  final RxList trendingWallpapers = <WallpaperEntity>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    getWallpGodCategories();
+    getRecentlyUsedWallpapers();
+    getTrendinWallpapers();
+  }
+
+  Future<void> getWallpGodCategories() async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+      final List<WallpaperGodCategoryEntity> wallpGodCategoryList =
+          await _wallpaperGodCategoriesUsecase();
+      wallpGodCategories.assignAll(wallpGodCategoryList);
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> getRecentlyUsedWallpapers() async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+      final List<WallpaperEntity> recentWallp =
+          await _recentlyUsedWallpaperUsecase();
+      if (recentWallp.isNotEmpty) {
+        recentlyUsedWllpapers.assignAll(recentWallp);
+      }
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> getTrendinWallpapers() async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+      final List<WallpaperEntity> trendingWallp =
+          await _trendingWallpapersUsecase();
+      if (trendingWallp.isNotEmpty) {
+        trendingWallpapers.assignAll(trendingWallp);
+      }
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\presentation\controllers\wallpaper_posts_by_god_category_controller.dart ---  
+import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_entity.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/usecases/wallpaper_posts_by_god_category_usecase.dart';
+import 'package:bhakti_vibe/features/wallpaper/presentation/args/wallpaperPostsByGodCategoryArgs.dart';
+import 'package:get/get.dart';
+
+class WallpapersByCategoryController extends GetxController {
+  final WallpapersByCategoryUsecase _wallpaperPostsByGodCategoryUsecase;
+
+  WallpapersByCategoryController({
+    required WallpapersByCategoryUsecase wallpaperPostsByGodCategoryUsecase,
+  }) : _wallpaperPostsByGodCategoryUsecase = wallpaperPostsByGodCategoryUsecase;
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
+  final RxList<WallpaperEntity> wallpapersByCategory = <WallpaperEntity>[].obs;
+  final RxString categoryName = ''.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    final args = Get.arguments as WallpapersByCategoryArgs;
+
+    getWallpapersByCategory(godCategoryId: args.id);
+    categoryName.value = args.categoryName;
+  }
+
+  Future<void> getWallpapersByCategory({required String godCategoryId}) async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+      final List<WallpaperEntity>? wallpapers =
+          await _wallpaperPostsByGodCategoryUsecase(
+            godCategoryId: godCategoryId,
+          );
+      if (wallpapers != null) {
+        wallpapersByCategory.assignAll(wallpapers);
+      }
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}
+ 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\presentation\views\wallpaper_full_screen_view.dart ---  
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+// Make sure to update this import path to your actual controller file location
+import 'package:bhakti_vibe/features/wallpaper/presentation/controllers/wallpaper_full_screen_controller.dart';
+
+class WallpaperFullScreenView extends GetView<WallpaperFullScreenController> {
+  const WallpaperFullScreenView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // A black background is standard for full-screen images to make colors pop
+      backgroundColor: Colors.black,
+      
+      // This allows the image to stretch all the way to the top of the screen, behind the AppBar
+      extendBodyBehindAppBar: true, 
+      
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+          onPressed: () => Get.back(),
+        ),
+      ),
+      
+      body: Obx(() {
+        // Fallback loading state if the current wallpaper hasn't registered yet
+        if (controller.currentWallpaper.value == null) {
+          return const Center(
+            child: CircularProgressIndicator(color: Colors.white),
+          );
+        }
+
+        // PageView allows standard left/right swiping functionality
+        return PageView.builder(
+          controller: PageController(initialPage: controller.currentIndex),
+          physics: const BouncingScrollPhysics(),
+          itemCount: controller.wallpaperList.length,
+          onPageChanged: (index) {
+            // Trigger your controller logic when the user swipes
+            if (index > controller.currentIndex) {
+              controller.showNextWallpaper(index);
+            } else {
+              controller.showPreviousWallpaper(index);
+            }
+          },
+          itemBuilder: (context, index) {
+            final wallpaper = controller.wallpaperList[index];
+
+            // InteractiveViewer is a basic widget that adds pinch-to-zoom for free
+            return InteractiveViewer(
+              child: Image.network(
+                wallpaper.images, 
+                // BoxFit.contain ensures the whole image fits on screen without cropping the artwork
+                fit: BoxFit.contain, 
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.white54,
+                      strokeWidth: 2,
+                    ),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  return const Center(
+                    child: Icon(Icons.broken_image, color: Colors.white54, size: 48),
+                  );
+                },
+              ),
+            );
+          },
+        );
+      }),
+    );
+  }
+} 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\presentation\views\wallpaper_main_view.dart ---  
+import 'package:bhakti_vibe/core/routes/app_routes.dart';
+import 'package:bhakti_vibe/features/wallpaper/presentation/args/wallpaperPostsByGodCategoryArgs.dart';
+import 'package:bhakti_vibe/features/wallpaper/presentation/args/wallpaper_full_screen_args.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_entity.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_gof_category_entity.dart';
+import 'package:bhakti_vibe/features/wallpaper/presentation/controllers/wallpaper_main_controller.dart';
+
+class WallpaperMainView extends GetView<WallpaperMainController> {
+  const WallpaperMainView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return  Obx(() {
+        if (controller.isLoading.isTrue) {
+          return const Center(
+            child: CircularProgressIndicator(color: Color(0xFFA63B3B)),
+          );
+        }
+
+        if (controller.errorMessage.isNotEmpty) {
+          return Center(
+            child: Text(
+              controller.errorMessage.value,
+              style: const TextStyle(color: Colors.red),
+            ),
+          );
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Gods category section
+            if (controller.wallpGodCategories.isNotEmpty) ...[
+              const SizedBox(height: 1),
+              _buildSectionTitle('Gods'),
+              Expanded(child: _buildGodCategoriesList()),
+            ],
+        
+            // Recently Used section
+            if (controller.recentlyUsedWllpapers.isNotEmpty) ...[
+              const SizedBox(height: 09),
+              _buildSectionTitle('Recent'),
+              Expanded(child: _buildRecentlyUsedList()),
+            ],
+        
+            // added the popular section here
+            // checking if the trending list has items before drawing it on screen
+            if (controller.trendingWallpapers.isNotEmpty) ...[
+              const SizedBox(height: 09),
+              _buildSectionTitle('Popular'),
+              Expanded(child: _buildPopularList()),
+            ],
+        
+            const SizedBox(height: 19),
+          ],
+        );
+      });
+  }
+
+  // simple title widget, keeping it clean without the view all button
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: Colors.black87,
+        ),
+      ),
+    );
+  }
+
+  // existing god categories list
+  Widget _buildGodCategoriesList() {
+    // took out the fixed height box so it flexes with Expanded
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      itemCount: controller.wallpGodCategories.length,
+      itemBuilder: (context, index) {
+        final WallpaperGodCategoryEntity category =
+            controller.wallpGodCategories[index];
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: GestureDetector(
+            onTap: () {
+              Get.toNamed(
+                AppRoutes.wallpapersByCategory,
+                arguments: WallpapersByCategoryArgs(
+                  categoryName: category.catName,
+                  id: category.id,
+                ),
+              );
+            },
+            child: Column(
+              children: [
+                // swapped fixed 72x72 sizing for Expanded + AspectRatio so circles scale down nicely
+                // wrapped this in padding to make the circles smaller 
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: AspectRatio(
+                      aspectRatio: 1.0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: NetworkImage(category.catImage),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  category.catName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFFA63B3B),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // modified recently used list to remove the text overlay at the bottom
+  Widget _buildRecentlyUsedList() {
+    // dropped the fixed height 180 wrapper
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      itemCount: controller.recentlyUsedWllpapers.length,
+      itemBuilder: (context, index) {
+        final WallpaperEntity wallpaper =
+            controller.recentlyUsedWllpapers[index];
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: GestureDetector(
+            onTap: () {
+              Get.toNamed(
+                AppRoutes.wallpaperFullScreen,
+                arguments: WallpaperFullScreenArgs(
+                  categoryTitle: 'Recent', // passing title because arguments class needs it
+                  currentWallpaper: wallpaper,
+                  currentIndex: index,
+                  wallpapers: controller.recentlyUsedWllpapers
+                      .cast<WallpaperEntity>()
+                      .toList(),
+                ),
+              );
+            },
+            // removed the fixed width 100 and added an AspectRatio of 0.65 so these tall portrait images don't stretch
+            child: AspectRatio(
+              aspectRatio: 0.65,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.0),
+                // removed the stack, just showing a plain image now
+                child: Image.network(
+                  wallpaper.images,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // new popular list built just like the recently used list
+  Widget _buildPopularList() {
+    // dropped the fixed height 180 wrapper
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      itemCount: controller.trendingWallpapers.length,
+      itemBuilder: (context, index) {
+        final WallpaperEntity wallpaper = controller.trendingWallpapers[index];
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: GestureDetector(
+            onTap: () {
+              Get.toNamed(
+                AppRoutes.wallpaperFullScreen,
+                arguments: WallpaperFullScreenArgs(
+                  categoryTitle: 'Popular', 
+                  currentWallpaper: wallpaper,
+                  currentIndex: index,
+                  wallpapers: controller.trendingWallpapers
+                      .cast<WallpaperEntity>()
+                      .toList(),
+                ),
+              );
+            },
+            // setting ratio here too instead of fixed width
+            child: AspectRatio(
+              aspectRatio: 0.65,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.0),
+                // same simple image setup with no text overlay
+                child: Image.network(
+                  wallpaper.images,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+} 
+// --- File: E:\IT\Flutter Marathon july aug\FLUTTER PREPS\Atharva Portfolio Apps\bhakti_vibe\lib\features\wallpaper\presentation\views\wallpaper_posts_by_category_view.dart ---  
+import 'package:bhakti_vibe/core/routes/app_routes.dart';
+import 'package:bhakti_vibe/features/wallpaper/presentation/args/wallpaper_full_screen_args.dart';
+import 'package:bhakti_vibe/features/wallpaper/presentation/controllers/wallpaper_posts_by_god_category_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:bhakti_vibe/features/wallpaper/domain/entities/wallpaper_entity.dart';
+
+class WallpapersByCategoryView extends GetView<WallpapersByCategoryController> {
+  const WallpapersByCategoryView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // Maintaining the consistent warm background color
+      backgroundColor: const Color(0xFFFCF4EE),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFFA63B3B)),
+          onPressed: () => Get.back(),
+        ),
+        title: Text(
+          controller
+              .categoryName
+              .value, // Note: You can dynamically pass the God's name here via Get.arguments if you'd like it to match Figma exactly (e.g. 'Gopala')
+          style: const TextStyle(
+            color: Color(0xFFA63B3B),
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+      ),
+      body: Obx(() {
+        // 1. Loading State
+        if (controller.isLoading.isTrue) {
+          return const Center(
+            child: CircularProgressIndicator(color: Color(0xFFA63B3B)),
+          );
+        }
+
+        // 2. Error State
+        if (controller.errorMessage.isNotEmpty) {
+          return Center(
+            child: Text(
+              controller.errorMessage.value,
+              style: const TextStyle(color: Colors.red),
+            ),
+          );
+        }
+
+        // 3. Empty State
+        if (controller.wallpapersByCategory.isEmpty) {
+          return const Center(
+            child: Text(
+              'No wallpapers found.',
+              style: TextStyle(color: Colors.black54, fontSize: 16),
+            ),
+          );
+        }
+
+        // 4. Success State - Simple Grid View (2 items horizontally)
+        return GridView.builder(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.all(16.0),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2, // 2 items side-by-side
+            crossAxisSpacing: 12.0, // Horizontal spacing
+            mainAxisSpacing: 12.0, // Vertical spacing
+            childAspectRatio:
+                0.65, // Makes the items taller than they are wide (like wallpapers)
+          ),
+          itemCount: controller.wallpapersByCategory.length,
+          itemBuilder: (context, index) {
+            final WallpaperEntity wallpaper =
+                controller.wallpapersByCategory[index];
+
+            return GestureDetector(
+              onTap: () {
+                Get.toNamed(
+                  AppRoutes.wallpaperFullScreen,
+                  arguments: WallpaperFullScreenArgs(
+                    categoryTitle: controller.categoryName.value,
+                    currentWallpaper: wallpaper,
+                    currentIndex: index,
+                    wallpapers: controller.wallpapersByCategory,
+                  ),
+                );
+              },
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.0),
+                child: Image.network(
+                  wallpaper.images,
+                  fit: BoxFit.cover,
+                  // Optional: Adds a smooth loading effect for network images
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      color: Colors.black12,
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFFA63B3B),
+                          strokeWidth: 2,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            );
+          },
+        );
+      }),
+    );
+  }
+}
+ 
