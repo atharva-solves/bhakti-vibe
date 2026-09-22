@@ -295,7 +295,7 @@ The project may continue to receive improvements in UI, responsiveness, testing,
 
 | Aarti Listings | Wallpaper Grid View | Wallpaper Fullscreen |
 | --- | --- | --- |
-| <img src="app_screenshots/aarti_list.png.jpg" width="188" alt="Aarti List Screen"> | <img src="app_screenshots/wallpaper_grid.png.jpg" width="188" alt="Wallpaper Grid View"> | <img src="app_screenshots/wallpaper_fullscreen.png.jpg" width="188" alt="Wallpaper Fullscreen View"> |
+| <img src="app_screenshots/aarti_list.png.jpg" width="188" alt="Aarti List Screen"> | <img src="app_screenshots/wallpaper_grid.jpg" width="188" alt="Wallpaper Grid View"> | <img src="app_screenshots/wallpaper_fullscreen.png.jpg" width="188" alt="Wallpaper Fullscreen View"> |
 
 
 ## 👨‍💻 Author
