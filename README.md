@@ -287,6 +287,17 @@ BhaktiVibe is a Flutter learning and portfolio project developed to practice rea
 
 The project may continue to receive improvements in UI, responsiveness, testing, and code quality as I continue developing my Flutter skills.
 
+## 📸 Screenshots
+
+| Main Dashboard | Common Dashboard | Audio Screen |
+| --- | --- | --- |
+| <img src="app_screenshots/aarti_main.png.jpg" width="188" alt="Aarti Main Screen"> | <img src="app_screenshots/common_dashboard.png.jpg" width="188" alt="Common Dashboard"> | <img src="app_screenshots/audio_screen.png.jpg" width="188" alt="Audio Screen Player"> |
+
+| Aarti Listings | Wallpaper Grid View | Wallpaper Fullscreen |
+| --- | --- | --- |
+| <img src="app_screenshots/aarti_list.png.jpg" width="188" alt="Aarti List Screen"> | <img src="app_screenshots/wallpaper_grid.png.jpg" width="188" alt="Wallpaper Grid View"> | <img src="app_screenshots/wallpaper_fullscreen.png.jpg" width="188" alt="Wallpaper Fullscreen View"> |
+
+
 ## 👨‍💻 Author
 
 **Atharva Shinde**
